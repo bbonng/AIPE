@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 체육수업 실천 연구회 · 포토 배경</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 100%; height: 100%; overflow: hidden;
+    font-family: 'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -webkit-user-select: none; user-select: none;
+  }
+  body { background: #000; }
+
+  .stage {
+    position: relative;
+    width: 100vw; height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    transition: background 0.5s ease;
+    overflow: hidden;
+  }
+
+  /* ============================================================
+     THEME 1 — 대구FC NAVY · SKY · GOLD
+     ============================================================ */
+  .stage[data-theme="1"] {
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 35%, #1e4278 0%, transparent 65%),
+      linear-gradient(135deg, #050f28 0%, #0a2046 50%, #050f28 100%);
+    color: #ffffff;
+  }
+  .stage[data-theme="1"] .eyebrow-line { background: linear-gradient(90deg, transparent, #f5c842 50%, transparent); box-shadow: 0 0 20px rgba(245,200,66,0.4); }
+  .stage[data-theme="1"] .eyebrow-text { color: #87b8dd; }
+  .stage[data-theme="1"] .title-sub { color: #c8e0f5; }
+  .stage[data-theme="1"] .title-main { color: #ffffff; }
+  .stage[data-theme="1"] .highlight { color: #f5c842; }
+  .stage[data-theme="1"] .date-chip {
+    background: rgba(245, 200, 66, 0.08);
+    border: 2px solid #f5c842;
+    color: #f5c842;
+    box-shadow: 0 0 30px rgba(245,200,66,0.15);
+  }
+  .stage[data-theme="1"] .corner { border-color: #f5c842; }
+  .stage[data-theme="1"] .side-bar { background: linear-gradient(180deg, transparent, #f5c842, transparent); opacity: 0.5; }
+
+  /* ============================================================
+     THEME 2 — WHITE · GREEN (체육 느낌)
+     ============================================================ */
+  .stage[data-theme="2"] {
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 40%, #ffffff 0%, transparent 60%),
+      linear-gradient(180deg, #f8faf5 0%, #e8f0e4 100%);
+    color: #1a2418;
+  }
+  .stage[data-theme="2"] .eyebrow-line { background: #16a34a; }
+  .stage[data-theme="2"] .eyebrow-text { color: #16a34a; }
+  .stage[data-theme="2"] .title-sub { color: #4a5a48; }
+  .stage[data-theme="2"] .title-main { color: #0e1a0c; }
+  .stage[data-theme="2"] .highlight { color: #16a34a; }
+  .stage[data-theme="2"] .date-chip {
+    background: #16a34a;
+    color: #ffffff;
+    border: 2px solid #16a34a;
+  }
+  .stage[data-theme="2"] .corner { border-color: #16a34a; }
+  .stage[data-theme="2"] .side-bar { background: linear-gradient(180deg, transparent, #16a34a, transparent); opacity: 0.4; }
+
+  /* ============================================================
+     THEME 3 — BLACK · NEON (테크 연구회 느낌)
+     ============================================================ */
+  .stage[data-theme="3"] {
+    background:
+      linear-gradient(rgba(3,8,6,0.92), rgba(3,8,6,0.92)),
+      repeating-linear-gradient(0deg, transparent 0, transparent 5vh, rgba(0,255,179,0.06) 5vh, rgba(0,255,179,0.06) calc(5vh + 1px)),
+      repeating-linear-gradient(90deg, transparent 0, transparent 5vh, rgba(0,255,179,0.06) 5vh, rgba(0,255,179,0.06) calc(5vh + 1px)),
+      #030806;
+    color: #e8fff5;
+  }
+  .stage[data-theme="3"] .eyebrow-line {
+    background: linear-gradient(90deg, transparent, #00ffb3 50%, transparent);
+    box-shadow: 0 0 25px #00ffb3;
+  }
+  .stage[data-theme="3"] .eyebrow-text {
+    color: #00ffb3;
+    font-family: 'Consolas', 'Courier New', monospace;
+  }
+  .stage[data-theme="3"] .title-sub { color: #88ffc8; letter-spacing: 0.02em; }
+  .stage[data-theme="3"] .title-main { color: #ffffff; }
+  .stage[data-theme="3"] .highlight {
+    color: #00ffb3;
+    text-shadow:
+      0 0 20px rgba(0,255,179,0.9),
+      0 0 50px rgba(0,255,179,0.5),
+      0 0 90px rgba(0,255,179,0.3);
+  }
+  .stage[data-theme="3"] .date-chip {
+    background: rgba(0,255,179,0.05);
+    border: 2px solid #00ffb3;
+    color: #00ffb3;
+    font-family: 'Consolas', 'Courier New', monospace;
+    box-shadow:
+      0 0 25px rgba(0,255,179,0.35),
+      inset 0 0 25px rgba(0,255,179,0.1);
+  }
+  .stage[data-theme="3"] .corner {
+    border-color: #00ffb3;
+    box-shadow: 0 0 15px rgba(0,255,179,0.6);
+  }
+  .stage[data-theme="3"] .side-bar {
+    background: linear-gradient(180deg, transparent, #00ffb3, transparent);
+    box-shadow: 0 0 10px #00ffb3;
+    opacity: 0.5;
+  }
+
+  /* ============================================================
+     LAYOUT
+     ============================================================ */
+  .eyebrow {
+    display: flex; align-items: center; gap: 2vh;
+    margin-bottom: 4vh;
+  }
+  .eyebrow-line { width: 8vw; height: 2px; }
+  .eyebrow-text {
+    font-size: 1.8vh;
+    font-weight: 700;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+  }
+
+  .title {
+    text-align: center;
+    line-height: 1.02;
+  }
+  .title-sub {
+    font-size: 7vh;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    margin-bottom: 1vh;
+  }
+  .title-main {
+    font-size: 15vh;
+    font-weight: 900;
+    letter-spacing: -0.035em;
+  }
+
+  .date-chip {
+    margin-top: 6vh;
+    padding: 1.8vh 4vh;
+    font-size: 3.2vh;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    border-radius: 100px;
+  }
+
+  /* corner brackets */
+  .corner {
+    position: absolute;
+    width: 4.5vh; height: 4.5vh;
+    border-style: solid;
+    border-width: 3px;
+  }
+  .corner.tl { top: 3.5vh; left: 3.5vh; border-right: 0; border-bottom: 0; }
+  .corner.tr { top: 3.5vh; right: 3.5vh; border-left: 0; border-bottom: 0; }
+  .corner.bl { bottom: 3.5vh; left: 3.5vh; border-right: 0; border-top: 0; }
+  .corner.br { bottom: 3.5vh; right: 3.5vh; border-left: 0; border-top: 0; }
+
+  /* side accents (visible between people) */
+  .side-bar {
+    position: absolute;
+    width: 2px;
+    height: 40vh;
+    top: 30vh;
+  }
+  .side-bar.left { left: 8vw; }
+  .side-bar.right { right: 8vw; }
+
+  /* control overlay — auto-hides */
+  .controls {
+    position: fixed;
+    bottom: 1.8vh; right: 1.8vh;
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    padding: 1vh 1.8vh;
+    border-radius: 10px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 1.3vh;
+    letter-spacing: 0.05em;
+    opacity: 0.9;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    z-index: 999;
+  }
+  .controls.fade { opacity: 0; }
+  .controls kbd {
+    background: rgba(255,255,255,0.15);
+    padding: 0.2vh 0.8vh;
+    border-radius: 4px;
+    margin: 0 0.2vh;
+  }
+</style>
+</head>
+<body>
+
+<div class="stage" data-theme="1">
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+  <div class="corner bl"></div>
+  <div class="corner br"></div>
+  <div class="side-bar left"></div>
+  <div class="side-bar right"></div>
+
+  <div class="eyebrow">
+    <div class="eyebrow-line"></div>
+    <div class="eyebrow-text">DAEGU · AI · PE</div>
+    <div class="eyebrow-line"></div>
+  </div>
+
+  <div class="title">
+    <div class="title-sub">AI 체육수업</div>
+    <div class="title-main">실천 <span class="highlight">연구회</span></div>
+  </div>
+
+  <div class="date-chip">2026. 04. 22.</div>
+</div>
+
+<div class="controls" id="controls">
+  <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> 테마 전환 &nbsp;·&nbsp;
+  <kbd>F11</kbd> 전체화면 &nbsp;·&nbsp;
+  <kbd>H</kbd> 안내 숨김
+</div>
+
+<script>
+  const stage = document.querySelector('.stage');
+  const controls = document.getElementById('controls');
+  let hideTimer;
+
+  // auto-fade controls after 5s
+  const resetFade = () => {
+    controls.classList.remove('fade');
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => controls.classList.add('fade'), 5000);
+  };
+  resetFade();
+  document.addEventListener('mousemove', resetFade);
+
+  document.addEventListener('keydown', (e) => {
+    if (['1','2','3'].includes(e.key)) {
+      stage.dataset.theme = e.key;
+      resetFade();
+    }
+    if (e.key === 'h' || e.key === 'H' || e.key === 'ㅗ') {
+      controls.style.display = (controls.style.display === 'none') ? '' : 'none';
+    }
+  });
+</script>
+
+</body>
+</html>
