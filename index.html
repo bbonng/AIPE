@@ -548,7 +548,7 @@ async function callGemini(onChunk) {
   const body = {
     system_instruction: { parts: [{ text: currentPersona.prompt }] },
     contents: history.map((m) => ({ role: m.role, parts: [{ text: m.text }] })),
-    generationConfig: { temperature: 0.7, maxOutputTokens: 4096 },
+    generationConfig: { temperature: 0.7, maxOutputTokens: 32768 },
   };
 
   const res = await fetch(url, {
@@ -573,6 +573,7 @@ async function callGemini(onChunk) {
   const decoder = new TextDecoder();
   let buffer = '';
   let full = '';
+  let finishReason = null;
 
   while (true) {
     const { done, value } = await reader.read();
@@ -586,14 +587,16 @@ async function callGemini(onChunk) {
       if (!payload || payload === '[DONE]') continue;
       try {
         const json = JSON.parse(payload);
-        const parts = json.candidates?.[0]?.content?.parts || [];
+        const cand = json.candidates?.[0];
+        if (cand?.finishReason) finishReason = cand.finishReason;
+        const parts = cand?.content?.parts || [];
         for (const p of parts) {
           if (p.text) { full += p.text; onChunk(full); }
         }
       } catch { /* 불완전한 JSON 조각은 무시 */ }
     }
   }
-  return full;
+  return { text: full, finishReason };
 }
 
 /* ============================================================
@@ -618,13 +621,20 @@ async function sendMessage() {
   const bubble = addAiMsg();
 
   try {
-    const full = await callGemini((partial) => {
+    const { text: full, finishReason } = await callGemini((partial) => {
       bubble.innerHTML = mdToHtml(partial);
       scrollBottom();
     });
     if (!full) throw new Error('답변이 비어 있어요. 다시 시도해 주세요.');
     history.push({ role: 'model', text: full });
     finishAiMsg(bubble, full);
+    if (finishReason === 'MAX_TOKENS') {
+      const note = document.createElement('div');
+      note.style.cssText = 'margin-top:8px;font-size:12.5px;color:var(--warn-ink);background:var(--warn-bg);border:1px solid #fed7aa;border-radius:8px;padding:7px 11px;';
+      note.textContent = '✂️ 답변이 길어서 중간에 잘렸어요. "잘린 부분부터 이어서 계속 작성해 줘"라고 입력하면 이어집니다.';
+      bubble.appendChild(note);
+      scrollBottom();
+    }
   } catch (e) {
     history.pop(); // 실패한 질문은 기록에서 제거해 재전송 가능하게
     bubble.classList.add('error');
@@ -645,6 +655,7 @@ function escapeHtml(s) {
 
 function inlineMd(s) {
   return s
+    .replace(/&lt;br\s*\/?&gt;/gi, '<br>')
     .replace(/`([^`]+)`/g, '<code>$1</code>')
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     .replace(/(^|[^*])\*([^*\s][^*]*)\*/g, '$1<em>$2</em>');
