@@ -17,11 +17,17 @@ from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Cm, Pt, RGBColor, Twips
 
+# ═══════════════════════════════════════════════════════════════
+#  서식 설정 — 양식을 바꾸고 싶으면 이 구역만 고치면 됩니다.
+#  (고정 문구는 코드 수정 없이 입력 JSON의 "서식" 키로도 덮어쓸 수 있음)
+# ═══════════════════════════════════════════════════════════════
 FONT = '맑은 고딕'
 HEADER_FILL = 'D9E2F3'   # 표 머리글 배경
 SECTION_FILL = 'EEF3FB'  # 부(部) 제목 배경
 ACCENT = '2E74B5'        # 부 제목 강조색
 CW = 16838 - 1134 * 2    # 본문 폭(twips): A3 세로 - 좌우 여백 2cm
+
+성취율표 = [('80%이상 ~ 100%', 'A'), ('60%이상 ~ 80%미만', 'B'), ('60%미만', 'C')]
 
 방침 = [
     '가. 체육과는 신체활동의 학습을 통해 활동적이고 창의적인 삶, 건강하고 주도적인 삶, 신체활동 문화를 향유하며 더불어 사는 삶의 자질을 기르는 것을 목적으로 하며, 평가는 이러한 교과의 목적에 부합하도록 신체활동 역량의 전반적인 성장을 확인하는 방향으로 실시한다.',
@@ -123,6 +129,12 @@ def page_break(doc):
 
 
 def build(data, out_path):
+    # 고정 문구를 JSON "서식" 키로 덮어쓰기 (코드 수정 없는 양식 변경)
+    서식 = data.get('서식', {})
+    방침_ = 서식.get('방침', 방침)
+    유의사항_ = 서식.get('유의사항', 유의사항)
+    성취율표_ = [tuple(x) for x in 서식.get('성취율표', 성취율표)]
+
     meta = data.get('meta', {})
     year = meta.get('year', '2026')
     semester = meta.get('semester', '1')
@@ -160,7 +172,7 @@ def build(data, out_path):
     section_header(doc, '1', '(체육)과 평가 계획')
     para(doc, '1. 평가 목적 및 평가 방향, 평가 방침', size=10, bold=True, after=4)
     t = make_table(doc, [CW], 1)
-    fill_cell(t.rows[0].cells[0], '\n'.join(방침), valign='top', fill='F8FAFF')
+    fill_cell(t.rows[0].cells[0], '\n'.join(방침_), valign='top', fill='F8FAFF')
     para(doc, '', after=6)
 
     # 평가 개요
@@ -188,12 +200,10 @@ def build(data, out_path):
     para(doc, '3. 성취율과 성취도', size=10, bold=True, after=3)
     para(doc, '정기시험 및 수행평가의 반영비율 환산 점수의 합계(성취율)에 따라 다음과 같이 평정한다.', after=3)
     gw = [CW // 2, CW - CW // 2]
-    t = make_table(doc, gw, 4)
+    t = make_table(doc, gw, len(성취율표_) + 1)
     header_cell(t.rows[0].cells[0], '성취율')
     header_cell(t.rows[0].cells[1], '성취도')
-    for r, (율, 도) in enumerate([('80%이상 ~ 100%', 'A'),
-                                  ('60%이상 ~ 80%미만', 'B'),
-                                  ('60%미만', 'C')], start=1):
+    for r, (율, 도) in enumerate(성취율표_, start=1):
         fill_cell(t.rows[r].cells[0], 율, align='center')
         fill_cell(t.rows[r].cells[1], 도, align='center', bold=True)
     para(doc, '', after=6)
@@ -257,7 +267,7 @@ def build(data, out_path):
              size=8, after=6)
 
     para(doc, '5. 유의 사항', size=10, bold=True, after=3)
-    for line in 유의사항:
+    for line in 유의사항_:
         para(doc, line, after=2)
 
     # ── 2부: 교수학습-평가 방법 (진도표) ──────────────
