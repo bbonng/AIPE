@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>내가 묻지 않았던 것들</title>
+<meta name="description" content="AI를 더 야심차게 쓰라는 글 한 편을 새벽에 읽고, 한 체육교사가 자기가 묻지 않았던 것들을 적은 글">
+<meta property="og:type" content="article">
+<meta property="og:title" content="내가 묻지 않았던 것들">
+<meta property="og:description" content="AI와 함께 수업을 다시 생각하다 — 대구일중학교 체육교사 이길봉">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://bbonng.github.io/AIPE/book/cover.png">
+<meta property="og:url" content="https://bbonng.github.io/AIPE/book/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Song+Myung&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+body{margin:0}img{max-width:100%}[hidden]{display:none!important}
+/* Layout: a pocket essay book — same shell as 「자격 대신, 공간」. Cover → one chapter per screen → quiet "다음" rule at each chapter's foot. */
+:root{
+  --paper:#F2F3EC;
+  --ink:#1B211C;
+  --soft:#5B6359;
+  --rule:#D6D9CC;
+  --court:#244335;
+  --court-ink:#E9ECE2;
+  --ball:#EBCB2E;
+  --ball-dk:#C9A912;
+  --mark:#E9DC8E;
+  --accent-ink:#244335;
+  --serif:"Gowun Batang","Noto Serif KR","Nanum Myeongjo",serif;
+  --display:"Song Myung","Gowun Batang","Noto Serif KR",serif;
+  --sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#141814;--ink:#E5E7DD;--soft:#9EA597;--rule:#2E352D;--court:#18301F;--court-ink:#E5E7DD;--mark:#4A4417;--accent-ink:#C9D3C0;color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#141814;--ink:#E5E7DD;--soft:#9EA597;--rule:#2E352D;--court:#18301F;--court-ink:#E5E7DD;--mark:#4A4417;--accent-ink:#C9D3C0;color-scheme:dark}
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--serif);-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:break-word}
+button{font:inherit;color:inherit}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ball-dk);outline-offset:3px;border-radius:4px}
+
+/* ---------- shell ---------- */
+.wrap{max-width:34rem;margin:0 auto;padding-inline:20px;padding-block:0 56px}
+.view[hidden]{display:none!important}
+
+/* cover */
+#cover{min-height:100%;display:flex;flex-direction:column}
+#cover .wrap{width:100%}
+.photo{margin:0;max-width:34rem;margin-inline:auto}
+.photo img{display:block;width:100%;max-width:100%;aspect-ratio:16/9;object-fit:cover;object-position:50% 55%;max-height:46vh;background:#fff}
+.photo figcaption{font-family:var(--sans);font-size:12px;color:var(--soft);padding:8px 20px 0;letter-spacing:.02em}
+/* 표지 그림이 아직 없을 때 자리만 잡아 두는 틀 — img에 src가 들어오면 자동으로 사라짐 */
+.photo .slot{aspect-ratio:4/3;max-height:46vh;border:1px dashed var(--rule);display:grid;place-items:center;font-family:var(--sans);font-size:12px;color:var(--soft);letter-spacing:.06em}
+.cover-top{padding-top:28px;display:grid;gap:14px}
+.chimg{margin:28px 0 20px}
+.chimg img{display:block;width:100%;aspect-ratio:3/4;max-height:56vh;object-fit:cover;border-radius:4px}
+.org{font-family:var(--sans);font-size:13px;font-weight:500;letter-spacing:.08em;color:var(--soft)}
+.ctitle{font-family:var(--display);font-weight:400;font-size:clamp(40px,12vw,58px);line-height:1.15;margin:0;text-wrap:balance}
+.csub{font-size:18px;color:var(--ink)}
+.byline{font-family:var(--sans);font-size:14px;color:var(--soft)}
+.toc{margin-top:44px;border-top:1px solid var(--rule)}
+.toc ol{list-style:none;margin:0;padding:0}
+.toc button{width:100%;display:grid;grid-template-columns:3.4rem 1fr auto;align-items:baseline;gap:6px;background:none;border:0;border-bottom:1px solid var(--rule);padding:14px 2px;text-align:left;cursor:pointer}
+.toc button:hover .tt{text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--ball-dk)}
+.toc .tn{font-family:var(--sans);font-size:13px;color:var(--soft);font-variant-numeric:tabular-nums}
+.toc .tt{font-size:17px}
+.toc .ta{font-family:var(--sans);font-size:13px;color:var(--soft)}
+.start{margin-top:32px;display:flex;align-items:baseline;justify-content:space-between;gap:12px;width:100%;padding:18px 2px;border:0;border-top:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink);background:none;color:var(--ink);font-family:var(--serif);font-size:18px;cursor:pointer}
+.start span:last-child{font-family:var(--sans);font-size:15px}
+
+/* reader */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:1px solid var(--rule)}
+.bar .in{max-width:34rem;margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:var(--sans);font-size:13px;color:var(--soft)}
+.bar button{background:none;border:0;padding:4px 0;cursor:pointer;color:var(--soft)}
+.dots{display:flex;gap:6px;align-items:center}
+.dots b{width:7px;height:7px;border-radius:50%;background:var(--rule)}
+.dots b.on{background:var(--ball);box-shadow:inset -1px -1px 0 var(--ball-dk);width:9px;height:9px}
+.dots b.done{background:var(--soft);opacity:.5}
+
+.chead{padding-top:44px;padding-bottom:8px;display:grid;gap:10px}
+.cnum{font-family:var(--sans);font-size:13px;font-weight:600;letter-spacing:.14em;color:var(--accent-ink)}
+.chead h2{font-family:var(--display);font-weight:400;font-size:clamp(32px,9vw,42px);line-height:1.2;margin:0;text-wrap:balance}
+.chead hr{width:28px;height:1px;border:0;background:var(--ink);margin:10px 0 0}
+
+.prose{font-size:17.5px;line-height:1.95;letter-spacing:-.003em}
+.prose p{margin:0 0 1.25em}
+.prose p.first::first-letter{font-family:var(--display);font-size:2.2em;line-height:1;float:left;margin:.08em .12em 0 0;color:var(--accent-ink)}
+.prose h3{font-family:var(--serif);font-weight:700;font-size:18px;margin:2em 0 .5em}
+.prose em{font-style:normal;font-weight:700}
+.prose .big{font-family:var(--display);font-size:24px;line-height:1.5;margin:1.6em 0;padding:18px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);text-align:center;text-wrap:balance}
+.prose p.last{margin-top:2.6em}
+.sep{text-align:center;color:var(--soft);letter-spacing:.6em;margin:2em 0}
+
+.next{margin-top:48px;border-top:1px solid var(--rule);padding-top:22px;display:grid;gap:18px}
+.next button.go{width:100%;display:flex;align-items:center;justify-content:space-between;gap:14px;text-align:left;padding:16px 2px;border:0;border-top:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink);background:none;color:var(--ink);cursor:pointer}
+.go small{display:block;font-family:var(--sans);font-size:12px;letter-spacing:.1em;color:var(--soft);margin-bottom:4px}
+.go strong{font-family:var(--display);font-weight:400;font-size:21px}
+.go .arr{flex:none;font-family:var(--sans);font-size:18px;color:var(--soft)}
+.back{background:none;border:0;font-family:var(--sans);font-size:14px;color:var(--soft);cursor:pointer;justify-self:start;padding:4px 0}
+.res{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:18px 2px;font-family:var(--sans);font-size:14.5px;line-height:1.7;display:grid;gap:8px}
+.res a{font-weight:600;color:var(--ink);text-decoration-color:var(--ball-dk);text-underline-offset:4px;word-break:break-all}
+.res p{margin:0;color:var(--soft)}
+.fin{text-align:center;font-family:var(--sans);font-size:12px;letter-spacing:.12em;color:var(--soft);margin-top:12px}
+</style>
+</head>
+<body>
+
+<!-- cover -->
+<section id="cover" class="view">
+  <figure class="photo">
+    <!-- 표지 그림이 정해지면 아래 img에 src를 넣고 slot div를 지우기 -->
+    <img id="coverImg" src="cover.png" alt="밤에 모니터 두 대 앞에 앉은 체육교사. 왼쪽 화면은 AI와의 대화, 오른쪽은 학교폭력·생활지도 목록 — 두들 그림" width="1680" height="945">
+    <div class="slot" id="coverSlot" hidden>표지 그림 자리</div>
+    <figcaption>어느 새벽</figcaption>
+  </figure>
+  <div class="wrap">
+    <div class="cover-top">
+      <div class="org">2026 AI 체육수업 실천 연구회</div>
+      <h1 class="ctitle">내가 묻지<br>않았던 것들</h1>
+      <div class="csub">AI와 함께 수업을 다시 생각하다</div>
+      <div class="byline">대구일중학교 체육교사 이길봉</div>
+    </div>
+    <nav class="toc" aria-label="차례"><ol id="toc"></ol></nav>
+    <button class="start" id="startBtn" type="button"><span>「새벽, 글 하나를 읽었다」부터 읽기</span><span aria-hidden="true">→</span></button>
+  </div>
+</section>
+
+<!-- reader -->
+<section id="reader" class="view" hidden>
+  <div class="bar"><div class="in">
+    <button type="button" id="toCover">← 차례</button>
+    <div class="dots" id="dots" aria-hidden="true"></div>
+    <span id="pos" style="font-variant-numeric:tabular-nums"></span>
+  </div></div>
+  <div class="wrap">
+    <header class="chead">
+      <div class="cnum" id="cnum"></div>
+      <h2 id="ctitle"></h2>
+      <hr>
+      <figure class="chimg" id="chimg" hidden><img id="chimgEl" alt=""></figure>
+    </header>
+    <article class="prose" id="body"></article>
+    <div class="next" id="next"></div>
+  </div>
+</section>
+
+<!-- chapters -->
+<template data-t="새벽, 글 하나를 읽었다" data-label="들어가며">
+<p class="first">새벽에 글 하나를 읽었다. AI를 좀 더 야심차게 쓰라는 이야기였다.</p>
+<p>쓴 사람은 펠릭스 리제버그. AI 회사 앤트로픽에서 Claude 개발을 이끌어 온 엔지니어링 매니저다. 2026년 10월 13일에 「How to be more ambitious」라는 글을 올렸다.</p>
+<p>그는 AI의 능력이 모든 방향으로 고르게 자라지는 않는다고 말한다. 어떤 쪽에서는 믿기 어려운 일을 해내고, 어떤 쪽에서는 아직 부족하다. 그 놀라운 쪽을 타고 멀리 가는 사람들이 있는 반면, 많은 사람은 여전히 간단한 질문을 하거나 이메일 말투를 고치는 데 AI를 쓴다고 했다.</p>
+<p>나는 세특 문장을 다듬는 데 썼다. 챗GPT가 처음 나왔을 때부터였다. 무언가를 만들기 시작한 건 그보다 한참 뒤였다. 대진표를 짜고, 작전판을 만들고, 평가표를 정리했다. 꽤 많은 것을 만들었다고 생각했다.</p>
+<p>그는 AI를 쓰는 방향을 네 가지로 나눈다. <em>속도, 높이, 깊이, 범위.</em> 속도는 같은 일을 더 빨리 끝내는 것. 높이는 눈앞의 일에서 한 걸음 물러나, 그 일이 결국 무엇을 위한 것인지 보는 것. 깊이는 그 분야 전문가가 실제로 쓰는 자료와 방법, 확인 과정까지 들어가는 것. 범위는 다른 분야의 방법을 빌려 지금 문제를 다시 보는 것.</p>
+<p>어려운 말은 없었다. 그런데 하나씩 내 쪽으로 옮겨 보니, 그동안 AI에게 부탁해 온 일들이 떠올랐다. 내가 만들려던 자료를 대신 만들어 달라고 했고, 내가 정해 놓은 기준을 보기 좋게 정리해 달라고 했다. 대부분 이미 내가 할 줄 아는 일이었다.</p>
+<p class="big">나는 AI가 할 수 있는 일을 묻지 않고,<br>내가 할 줄 아는 일만 시키고 있었다.</p>
+<p>그렇다면 내가 묻지 않았던 것은 무엇이었을까. 네 가지에 하나씩 비춰 보기로 했다.</p>
+</template>
+
+<template data-t="묻지 않아도 되는 일" data-label="1장 속도">
+<p class="first">리제버그는 속도를 길게 설명하지 않는다. 같은 일을 더 빨리 하는 것은 이미 잘 알려진 AI의 쓰임이라, 한 줄로 지나간다.</p>
+<p>그가 짧게 지나간 이 칸에, 나는 꽤 오래 머물러 있었다.</p>
+<p>내가 AI로 한 일은 대부분 속도였다. 세특 문장을 다듬고, 수행평가 점수를 입력하고, 긴 공문을 요약하고, 복잡한 내용을 표로 정리했다. 피구대회 심판 등록부를 만들었고, 복식 대진표를 짰다. 하나하나는 전부 내가 할 줄 아는 일이다. AI가 없었어도 했을 일이고, 다만 밤이 길어졌을 뿐이다.</p>
+<p>속도는 아무것도 묻지 않아도 되는 칸이다. 시키기만 하면 된다.</p>
+<p>그렇다고 속도가 가볍다는 말은 아니다. 수업보다 수업 밖의 일이 더 많은 날도 있는 학교에서, 덜어 낸 시간은 수업을 한 번 더 생각할 시간이 되고 아이 이야기를 조금 더 들을 시간이 된다.</p>
+<p>다만 아낀 시간이 실제로 어디로 갔는지는 자신이 없다. 자료 하나가 빨리 끝나면 다음 자료를 만들었다. 표가 쉽게 나오니 기준을 하나 더 넣었다. 편해진 만큼 일을 더 했다.</p>
+<p class="big">일을 빨리 끝내는 것과,<br>그 일을 제대로 하는 것은 다른 문제였다.</p>
+<p>표 하나가 끝났을 때, 그 표가 결국 무엇을 위한 것이었는지 물어본 적이 있었던가. 리제버그의 두 번째 개념, 높이는 거기서 시작한다.</p>
+</template>
+
+<template data-t="공간을 보게 하려면" data-label="2장 높이">
+<p class="first">리제버그는 자기 경험으로 높이를 설명한다. 처음에는 AI에게 프로그램의 오류를 하나씩 고쳐 달라고 했다. 그러다 어느 순간부터는 오류 하나가 아니라, 프로그램이 오류 없이 돌아가도록 지켜 달라고 맡겼다.</p>
+<p>비슷해 보이지만 다르다. 하나는 생긴 문제를 고치는 일이고, 다른 하나는 그 일들이 모여서 이루려는 것을 맡기는 일이다. 그는 이렇게 묻는다. 그다음에 무슨 일이 일어나길 바라는가.</p>
+<p>이 대목에서 작전판이 떠올랐다.</p>
+<p>지금 하고 있는 수업에서 내가 가르치고 싶은 것은 하나다. 공간을 보는 눈. 축구에서 멋진 골보다, 득점에는 실패했어도 빈 공간을 보고 넣어 준 스루패스의 그 기점. 그걸 알아보는 눈을 아이들에게 주고 싶었다.</p>
+<p>나는 수업에 부제를 붙인다. 작년 농구의 부제는 스텝이었다. 공을 넣는 기술보다 앞으로 나아가는 발이 먼저라고 생각해서였다. 올해 플래그풋볼의 부제는 공간이다. 작전판을 만든 것도 그래서였다.</p>
+<p>작전판은 6월부터 생각했다. 처음 만든 판은 한 번 갈아엎었다. 수업을 준비하고, 수업을 하면서 판이 무엇을 보여 줘야 하는지가 점점 또렷해졌다. 다시 만든 판은 하나만 보여 준다. 수비가 리시버를 늦게 따라가면 공간이 생긴다는 것. 아이들이 처음 당구를 치고 나서 당구대를 떠올리며 3쿠션을 상상하듯, 이렇게 움직이면 공간이 생기겠구나를 즐겁게 상상하게 만들고 싶었다.</p>
+<p>그런데 판이 무엇을 보여 줘야 하는지는 내가 수업을 하면서 혼자 찾아간 것이었다. AI에게 한 말은 처음부터 끝까지 비슷했다. "작전판을 만들어 줘." "여기를 고쳐 줘." 오류를 하나씩 고쳐 달라는 말과 같은 높이였다.</p>
+<p class="big">공간을 보게 하려면 어떻게 해야 하느냐고,<br>나는 한 번도 묻지 않았다.</p>
+<p>그 질문을 통째로 AI에게 넘기는 게 맞는지는 아직 모르겠다. 다만 한 번이라도 물어봤다면, 대화는 조금 달라졌을 것이다.</p>
+<p>올해 아이들은 긴 패스가 어려우니 속임수 작전을 많이 쓴다. 그게 실제 경기에서 먹히는 날이 있다. 그런데 같은 작전을 작전판에 올리면 5야드도 못 가서 아이들이 속상해한다. 판이 아이들을 따라가지 못하는 것이다. 화면에서 잘된 작전이 운동장에서 통하는 게 아니라, 운동장에서 통한 것을 화면이 따라와야 한다는 걸 아이들이 가르쳐 줬다.</p>
+<p>다음엔 판을 고쳐 달라고 하기 전에 먼저 물어보려 한다. 운동장에서 통한 작전이 판에서는 왜 안 통할까. 아이들이 공간을 보게 하려면, 이 판은 무엇을 보여 줘야 할까.</p>
+<p>목표를 바로 세웠다고 해서, 그 목표에 닿는 방법까지 맞는 걸까. 세 번째 개념, 깊이는 여기서 이어진다.</p>
+</template>
+
+<template data-t="묻지 않은 질문 하나" data-label="3장 깊이">
+<p class="first">리제버그는 AI에게 전문가처럼 하라고 하면, 말투만 바뀌고 방법은 그대로인 경우가 많다고 했다. 그가 말하는 깊이는 전문가의 말투가 아니라 전문가의 방법이다. 누가 정리해 준 것 말고 날것의 자료에서 시작하고, 그 분야 사람들이 실제로 쓰는 도구를 쓰고, 결과가 맞는지는 AI 스스로 판단하게 두지 말고 바깥에서 확인하라는 것이다.</p>
+<p>이 대목에서 평가지 하나가 떠올랐다.</p>
+<p>수행평가를 준비할 때 가장 오래 붙잡고 있는 일이 평가 기준을 만드는 것이다. AI는 이 일을 꽤 잘 도와준다. 종목과 평가 요소를 알려 주면 수준별 기준을 만들어 주고, 문장도 다듬어 준다. 표는 금방 완성된다.</p>
+<p>피클볼 첫해에 만든 경기 평가 체크리스트가 그랬다. 항목이 많았고, 보기에는 훌륭했다. 그런데 그 종이를 들고 코트에 나가 보니, 종이를 다 채우려면 정작 아이들을 볼 틈이 없었다.</p>
+<p>기준이 모호해서 생기는 문제와, 평가하려는 능력을 잘못 정해서 생기는 문제는 다르다. 앞의 것은 문장을 고치면 나아진다. 뒤의 것은 아무리 다듬어도 해결되지 않는다. 내 평가지는 뒤의 것이었다.</p>
+<p>그 평가지가 재는 것이 내 목표가 맞느냐고, 나는 누구에게도 묻지 않았다. AI에게도, 나 자신에게도.</p>
+<p>그 평가지는 AI와 상관없이 내가 만든 것이다. 그런데 AI였다면 더 빨리, 더 촘촘하게 만들어 줬을 것이다. 항목은 더 늘었을 것이다. 그리고 "좋은 평가표입니다"라고 했을 것이다.</p>
+<p class="big">묻지 않으면 AI는<br>틀린 평가지를 더 잘 만들어 준다.</p>
+<p>리제버그가 말한 바깥은, 교사에게는 아이들이었다. 좋은 평가표가 곧 좋은 평가는 아니었고, 그걸 알려 준 건 아이들이었다.</p>
+<p>다음 평가지를 만들 땐 항목부터 달라고 하지 않고 먼저 물어보려 한다. 이 평가지가 재는 것이 내가 가르친 것과 같은가. 그게 맞는지는 무엇으로 확인할 수 있는가.</p>
+<p>평가지를 들고 코트에 서 보면, 기능만으로는 설명되지 않는 장면이 자주 보인다. 네 번째 개념, 범위가 떠오른 건 그 장면에서였다.</p>
+</template>
+
+<template data-t="같은 친구와는 한 번만" data-label="4장 범위">
+<p class="first">경기가 시작되면 공은 몇몇 아이에게 몰린다. 잘하는 아이가 공을 잡고, 잘하는 친구에게 준다. 다른 아이들은 코트 위에 있지만 공을 만질 일이 거의 없다. 골고루 패스하라고 말해도, 다음 경기에서 같은 장면이 되풀이된다.</p>
+<p>왜 그 아이에게는 패스하지 않을까. 공을 받지 못하는 아이는 어떤 마음일까. 받고 싶은데 기회가 없는 걸 수도 있고, 실수할까 봐 공이 오지 않기를 바라고 있을 수도 있다.</p>
+<p>리제버그는 범위를 넓히는 방법으로 오래된 요령 하나를 소개한다. 명사를 동사로 바꿔 보라는 것이다. 분기 보고서는 '발표 자료'가 아니라 '바쁜 사람들이 30분 안에 원인과 결과를 믿고 결정하게 만드는 일'이다. 동사로 바꾸면 그 일에 어떤 분야가 필요한지가 보인다고 했다. 그리고 하나를 당부한다. 그 분야 사람처럼 말하게 하지 말고, 그 사람이 실제로 하는 일을 하게 하라고.</p>
+<p>나도 해 봤다. 조 편성은 '명단 나누기'가 아니었다. '아이들이 서로에게 공을 주고받게 만드는 일'이었다.</p>
+<p>그렇게 쓰고 보니, 체육교육학 말고 다른 분야의 일을 이미 하고 있었다. 올해 플래그풋볼 첫 시간들, 아이들은 미식축구를 해 본 적이 없으니 무작정 패스만 수십 번 던졌고 수비는 밀고 잡고 당기는 핸드볼이 되어 갔다. 규칙을 바꿨다. 전방 패스를 없애고, 플래그가 뽑히면 그 자리에 서고, 수비는 1대1로. 그다음 시간에 전방 패스를 딱 한 번 열었다. 어떤 규칙이 누구에게 기회를 주는지 묻는 것, 게임 디자인이 하는 일이다.</p>
+<p>복식 대진표에는 원칙이 하나 있다. 같은 친구와는 한 번만 짝이 된다. 플래그풋볼 팀을 짤 때는 여학생이 한 팀에 최소 두 명은 들어가게 했다. 반에서 잘 어울리지 못하는 아이가 보이면, 리더십 있는 아이와 같은 조가 되도록 조건을 짰다. 누가 누구와 함께해야 하는지 아이들을 보고 읽는 것, 사회심리학이 하는 일이다.</p>
+<p>체육교사라면 다들 이렇게 해 왔을 것이다. 나만 그런 게 아닐 것이다.</p>
+<p>그런데 AI에게는 "이 조건으로 짜 줘"라고만 했다. 조건은 내가 정했고, AI는 그걸 코드로 옮겼다. 그 아이에게 왜 공이 가지 않는지, 게임 디자이너와 사회심리학자라면 무엇을 보겠느냐고 물어본 적은 없다.</p>
+<p class="big">묻는 것과 시키는 것은<br>다른 일이었다.</p>
+<p>다음엔 조건을 건네기 전에 먼저 물어보려 한다. 이 반에서 그 아이에게 공이 가지 않는 이유를, 게임 디자이너라면 무엇에서 찾을까. 사회심리학자라면 무엇을 먼저 볼까.</p>
+<p>그런데 아이를 더 잘 알고 싶어서 AI에게 묻는다면, 어디까지 물어도 되는 걸까.</p>
+</template>
+
+<template data-t="AI가 모르는 학생" data-label="5장 교사의 일">
+<p class="first">여기까지 쓰고 나니, 묻기만 하면 될 것 같다. 작전을 되묻고, 평가를 되묻고, 다른 분야의 눈까지 빌릴 수 있으니.</p>
+<p>그런데 리제버그의 글에서 내가 따라갈 수 없는 대목도 있었다. 그는 높이를 올리다 보면 사람이 일일이 끼어들지 않아도 되는 흐름이 생긴다고 했다. 그리고 이 모든 야심에는 AI가 필요한 자료에 마음껏 닿을 수 있어야 한다는 조건이 붙는다고 했다. 프로그램이라면 그럴 수 있다. 교실은 다르다.</p>
+<p>생활안전부장으로서 나는 학생 면담을 녹음한다. 녹음기를 책상 위에 두고, 교사를 지키기 위한 것이라고 먼저 설명하고, 그날 서류로 남긴다. 그리고 요즘은 그 녹취록을 AI에게 읽힌다. 아이가 말하지 않은 것을 읽어 보려고.</p>
+<p>리제버그의 말대로라면 녹취록은 가장 날것의 자료다. 그런데 여기엔 바깥이 없다. AI가 "이 아이는 이런 상태로 보인다"고 했을 때 그게 맞는지를 무엇이 보여 주나. 코트에서는 아이가 빈 곳으로 뛰면 보이는데, 마음은 그런 증거가 없다. 그리고 사안의 목적은 피해 학생의 회복이지 학생 분석이 아니다. 녹취록을 읽히는 일이 깊이인지, 넘지 말아야 할 선인지, 나는 아직 모르겠다.</p>
+<p>아이에게 물어야 할 것을, AI에게 묻고 있는 건 아닌가.</p>
+<p>한 아이가 경기 내내 공을 피했다고 하자. AI는 기능 부족, 자신감, 팀 안의 역할을 원인으로 내놓을 것이다. 도움이 되는 가설들이다. 그러나 그 아이가 어제 어떤 일을 겪었는지, 오늘 아침 친구와 무슨 말을 주고받았는지는 모른다. 나도 다 알지는 못한다. 그래서 묻고, 듣고, 지켜본다.</p>
+<p class="big">AI는 학생을 모른다.<br>나도 다 알지는 못한다.</p>
+<p>내가 AI로 작전 백 개를 만들어도 아이가 화살표만 따라 뛴다면, 전술을 스스로 판단하는 힘이 자랐다고 말할 수 없다. 반대로 단순한 경기 하나에서 아이가 빈 공간을 발견하고 다음 움직임을 바꿨다면, 그 수업에는 배움이 있었을 것이다. 교사가 AI로 더 많은 일을 할 수 있게 되는 것과, 아이들의 배움이 깊어지는 것은 다르다. 내가 마음을 두고 싶은 것은 두 번째다.</p>
+<p>이것은 AI가 부족하다는 말이 아니다. 내가 놓으면 안 되는 일이 무엇인지 확인하는 일에 가깝다.</p>
+<p>경기 내내 공을 피한 아이에게 다가가 말을 거는 일. 녹취록을 AI에게 넘기기 전에, 그 아이가 앞에 앉아 있던 모습을 먼저 떠올리는 일. 누구를 같은 조에 넣을지 정하기 전에, 그 반 아이들이 서로 어떻게 지내는지 한 번 더 보는 일. 점수를 적기 전에, 그 아이가 지난번보다 무엇이 달라졌는지 기억해 내는 일.</p>
+<p>AI는 그 일을 도와줄 수는 있어도 대신해 주지는 못한다. 그 일만큼은 내 손에서 놓고 싶지 않다.</p>
+</template>
+
+<template data-t="아직 해보지 않은 수업" data-label="맺으며">
+<p class="first">리제버그는 글 끝에서 왜 이런 글을 썼는지 털어놓는다. 사람은 자기가 가능하다고 믿는 만큼만 해낸다는 것이다.</p>
+<p>그가 든 예 가운데 하나는 체육교사라면 다 아는 이야기다. 1954년 5월, 로저 배니스터가 1마일을 4분 안에 뛰었다. 수십 년 동안 아무도 넘지 못하던 벽이었다. 그런데 그가 혼자였던 기간은 46일뿐이었다. 벽은 누군가 한 번 넘고 나자 낮아졌다. 올봄 런던에서는 마라톤 2시간의 벽이 깨졌고, 같은 경기에서 2위도 그 벽을 넘었다.</p>
+<p>그 대목을 읽으며 생각했다. AI 앞에서 나는 넘어 보기도 전에 벽을 정해 두고 있었는지 모른다. 내가 할 줄 아는 것까지만.</p>
+<p>나에게도 시작하지 못한 수업들이 있다. 시간이 많이 들어서, 잘 모르는 분야라서, 혼자서는 어렵다고 여겨서. 그때는 제약이라고 생각했던 것들 중 몇 가지를 이제는 다시 꺼내 볼 수 있을 것 같다.</p>
+<p>그렇다고 AI를 많이 쓰는 교사가 더 좋은 교사라는 뜻은 아니다. 아이를 오래 지켜본 교사의 짧은 한마디가 복잡한 프로그램보다 정확할 때가 있다. 오늘 연수에서 "다 됩니다"라고 말씀드린 사람이 이렇게 쓰는 것이 이상하게 들릴지도 모르겠다. 하지만 둘 다 사실이다.</p>
+<p>그래서 나는 '야심차게'라는 말을 쉽게 쓰지 못하겠다. 영어의 ambitious는 더 멀리 가 보려는 마음에 가까운데, 한국어의 야심은 때로 남보다 앞서려는 마음처럼 들린다. 영어로 읽은 것을 우리말로 옮기면서 가장 오래 걸린 단어였다. 리제버그의 뜻과 어긋난 곳이 있다면 내 탓이다. 내가 붙잡고 싶은 뜻은 이렇다. 더 좋은 수업을 해 보고 싶다는 마음. 그리고 내가 해 온 방법이 전부는 아닐 수 있다는 생각.</p>
+<p>새벽에 읽은 글 하나가 내게 남긴 것은 새로운 AI 기능이나 특별한 프롬프트가 아니었다. 당연하게 여기던 일들을 다시 물어볼 수 있다는 사실이었다.</p>
+<p class="last">묻지 않았던 것들을, 이제야</p>
+<p class="big">묻기 시작했다.</p>
+</template>
+
+<script>
+(function(){
+  const tpls=[...document.querySelectorAll('template[data-t]')];
+  const chapters=tpls.map((t,i)=>({title:t.dataset.t,html:t.innerHTML,img:t.dataset.img,alt:t.dataset.alt,label:t.dataset.label||((i+1)+'장'),num:t.dataset.label||String(i+1)}));
+  const N=chapters.length;
+  const $=id=>document.getElementById(id);
+  const cover=$('cover'),reader=$('reader');
+
+  /* cover image: show when a src is present */
+  const ci=$('coverImg');if(ci.getAttribute('src')){ci.hidden=false;$('coverSlot').hidden=true;}
+
+  /* table of contents */
+  const toc=$('toc');
+  chapters.forEach((c,i)=>{const li=document.createElement('li');const b=document.createElement('button');b.type='button';
+    b.innerHTML='<span class="tn">'+c.num+'</span><span class="tt"></span><span class="ta" aria-hidden="true">→</span>';
+    b.querySelector('.tt').textContent=c.title;b.addEventListener('click',()=>open(i));li.appendChild(b);toc.appendChild(li);});
+  const dots=$('dots');for(let i=0;i<N;i++)dots.appendChild(document.createElement('b'));
+
+  function open(i){
+    const c=chapters[i];
+    cover.hidden=true;reader.hidden=false;
+    $('cnum').textContent=c.label;
+    $('ctitle').textContent=c.title;
+    $('body').innerHTML=c.html;
+    if(c.img){$('chimgEl').src=c.img;$('chimgEl').alt=c.alt||'';$('chimg').hidden=false;}else{$('chimg').hidden=true;}
+    $('pos').textContent=(i+1)+' / '+N;
+    [...dots.children].forEach((d,k)=>{d.className=k===i?'on':k<i?'done':'';});
+    const nx=$('next');nx.innerHTML='';
+    if(i<N-1){
+      const go=document.createElement('button');go.type='button';go.className='go';
+      go.innerHTML='<span><small>다음 · '+chapters[i+1].label+'</small><strong></strong></span><span class="arr" aria-hidden="true">→</span>';
+      go.querySelector('strong').textContent=chapters[i+1].title;go.addEventListener('click',()=>open(i+1));nx.appendChild(go);
+    }else{
+      const r=document.createElement('div');r.className='res';
+      r.innerHTML='<p>오늘 연수에서 보신 체육교사 업무분장표와 거기 달린 도구들은 여기 있습니다.</p><a href="https://bbonng.github.io/AIPE/board/" target="_blank" rel="noopener">bbonng.github.io/AIPE/board</a><p>이 글이 출발한 원문입니다.</p><a href="https://felixrieseberg.com/how-to-be-more-ambitious-a-tutorial-for-humans-with-models/" target="_blank" rel="noopener">Felix Rieseberg, How to be more ambitious (2026. 10. 13.)</a>';
+      nx.appendChild(r);
+      const home=document.createElement('button');home.type='button';home.className='go';
+      home.innerHTML='<span><small>끝까지 읽어 주셔서 고맙습니다</small><strong>처음으로</strong></span><span class="arr" aria-hidden="true">↺</span>';
+      home.addEventListener('click',showCover);nx.appendChild(home);
+      const f=document.createElement('div');f.className='fin';f.textContent='새벽에 · 이길봉';nx.appendChild(f);
+    }
+    if(i>0){const bk=document.createElement('button');bk.type='button';bk.className='back';bk.textContent='← '+chapters[i-1].label+' '+chapters[i-1].title;bk.addEventListener('click',()=>open(i-1));nx.appendChild(bk);}
+    try{history.replaceState(null,'','#ch'+(i+1));}catch(e){}
+    window.scrollTo(0,0);
+  }
+  function showCover(){reader.hidden=true;cover.hidden=false;try{history.replaceState(null,'','#cover');}catch(e){}window.scrollTo(0,0);}
+  $('startBtn').addEventListener('click',()=>open(0));
+  $('toCover').addEventListener('click',showCover);
+
+  const m=/^#ch(\d+)$/.exec(location.hash);
+  if(m&&+m[1]>=1&&+m[1]<=N)open(+m[1]-1);
+})();
+</script>
+
+</body>
+</html>
