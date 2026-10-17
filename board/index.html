@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>*,*::before,*::after{box-sizing:border-box}body{margin:0}[hidden]{display:none!important}</style>
+<title>체육교사 업무분장표</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&family=Nanum+Myeongjo:wght@800&display=swap">
+<style>
+/* layout: 학교 업무분장표 한 장 — 왼쪽 업무 칸, 오른쪽 담당 도구. 칸을 누르면 도구(또는 대화)로 들어간다 */
+:root{
+  --paper:#F4F6F9; --sheet:#FFFFFF; --ink:#17202B; --sub:#5A6575; --line:#D3D9E1; --line-strong:#8F9BAA;
+  --head:#EDF1F5; --accent:#0A7BD0; --accent-soft:#E3F0FB; --hover:#F3F7FB;
+  --bubble-t:#0A7BD0; --bubble-t-ink:#FFFFFF; --bubble-ai:#EDF1F5; --scrim:rgba(15,20,26,.55);
+  --band-blue:#0099FF; --band-yellow:#FFCC00; --band-green:#339900; --band-red:#FF3300;
+  --f-title:"Nanum Myeongjo","Batang",serif;
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0E1319; --sheet:#151C24; --ink:#E6EBF1; --sub:#98A5B4; --line:#283240; --line-strong:#4A5767;
+  --head:#1B2430; --accent:#52B4FF; --accent-soft:#16304A; --hover:#1A2330;
+  --bubble-t:#2A7FC4; --bubble-t-ink:#FFFFFF; --bubble-ai:#1F2935; --scrim:rgba(0,0,0,.65); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0E1319; --sheet:#151C24; --ink:#E6EBF1; --sub:#98A5B4; --line:#283240; --line-strong:#4A5767;
+  --head:#1B2430; --accent:#52B4FF; --accent-soft:#16304A; --hover:#1A2330;
+  --bubble-t:#2A7FC4; --bubble-t-ink:#FFFFFF; --bubble-ai:#1F2935; --scrim:rgba(0,0,0,.65); color-scheme:dark}
+html,body{min-height:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;
+  padding-block:clamp(16px,4vw,40px);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sheet{max-width:1180px;margin:0 auto;background:var(--sheet);border:1px solid var(--line-strong)}
+.band{display:grid;grid-template-columns:3fr 1fr;height:8px}
+.band.top span:first-child{background:var(--band-blue)} .band.top span:last-child{background:var(--band-yellow)}
+.band.bot span:first-child{background:var(--band-green)} .band.bot span:last-child{background:var(--band-red)}
+.head{display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:12px;padding:18px clamp(14px,2.5vw,28px) 16px}
+.head h1{grid-column:2;margin:0;font-family:var(--f-title);font-weight:800;font-size:clamp(24px,3.4vw,40px);letter-spacing:.06em;text-align:center;text-wrap:balance}
+.head .year{font-size:13px;color:var(--sub);letter-spacing:.04em}
+.head .who{justify-self:end;font-size:13px;color:var(--sub)}
+.head .who b{color:var(--ink);font-weight:600}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+th,td{border-top:1px solid var(--line);vertical-align:top}
+th{width:clamp(96px,14vw,170px);background:var(--head);text-align:left;font-weight:600;font-size:clamp(15px,1.6vw,19px);
+  padding:16px clamp(10px,1.6vw,20px);border-right:1px solid var(--line)}
+th small{display:block;font-weight:400;font-size:12px;color:var(--sub);margin-top:2px;font-variant-numeric:tabular-nums}
+td{padding:10px}
+.cells{display:grid;grid-template-columns:repeat(auto-fill,minmax(clamp(132px,15vw,190px),1fr));gap:6px}
+.cell{display:flex;align-items:center;gap:8px;min-height:52px;padding:10px 12px;border:1px solid var(--line);background:var(--sheet);
+  color:var(--ink);text-decoration:none;font:inherit;font-size:clamp(15px,1.45vw,18px);font-weight:500;text-align:left;cursor:pointer;
+  transition:background .15s,border-color .15s;min-width:0}
+.cell:hover{background:var(--hover);border-color:var(--line-strong)}
+.cell:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.cell .nm{flex:1;min-width:0;overflow-wrap:anywhere}
+.cell .go{flex:none;font-size:13px;color:var(--sub)}
+.cell.nolink{color:var(--sub);cursor:default;border-style:dashed}
+.cell.nolink:hover{background:var(--sheet);border-color:var(--line)}
+.dot{flex:none;width:9px;height:9px;border-radius:50%;background:var(--accent);opacity:0;transform:scale(.3);transition:opacity .35s,transform .35s}
+body.dots .dot.on{opacity:1;transform:scale(1)}
+body.dots .cell.stu{background:var(--accent-soft);border-color:var(--accent)}
+body.talk .cell{cursor:pointer;border-style:solid;color:var(--ink)}
+body.talk .cell.nochat{color:var(--sub)}
+.foot{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;padding:12px clamp(14px,2.5vw,28px);border-top:1px solid var(--line);font-size:13px;color:var(--sub)}
+.legend{display:flex;align-items:center;gap:6px;opacity:0;transition:opacity .35s}
+body.dots .legend{opacity:1}
+.legend i{width:9px;height:9px;border-radius:50%;background:var(--accent);display:inline-block}
+.ctrls{display:flex;gap:6px}
+.pubnote{font-size:13px;color:var(--sub);flex-basis:100%}
+.ctrls button{font:inherit;font-size:13px;color:var(--sub);background:transparent;border:1px solid var(--line);padding:5px 10px;cursor:pointer}
+.ctrls button[aria-pressed="true"]{color:var(--ink);border-color:var(--line-strong);background:var(--head)}
+.ctrls button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+@media (max-width:620px){
+  .head{grid-template-columns:1fr;text-align:center}.head h1{grid-column:1}.head .who{justify-self:center}
+  table,tbody,tr,th,td{display:block;width:auto}th{border-right:0;padding:10px 12px}
+}
+/* 대화 화면 */
+.chat{position:fixed;inset:0;z-index:20;background:var(--scrim);display:flex;align-items:center;justify-content:center;
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.panel{width:min(760px,100%);max-height:100%;overflow:auto;background:var(--sheet);border:1px solid var(--line-strong)}
+.panel .band{height:6px}
+.ph{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line)}
+.ph h2{margin:0;font-size:20px;font-weight:600}
+.ph .cat{font-size:13px;color:var(--sub)}
+.ph button{font:inherit;font-size:14px;background:transparent;color:var(--ink);border:1px solid var(--line);padding:6px 12px;cursor:pointer}
+.msgs{display:flex;flex-direction:column;gap:12px;padding:20px}
+.msg{max-width:80%;padding:12px 16px;font-size:clamp(16px,1.6vw,19px);line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+.msg.t{align-self:flex-end;background:var(--bubble-t);color:var(--bubble-t-ink);border-radius:16px 16px 4px 16px}
+.msg.ai{align-self:flex-start;background:var(--bubble-ai);color:var(--ink);border-radius:16px 16px 16px 4px}
+.msg .by{display:block;font-size:12px;opacity:.75;margin-bottom:2px}
+.empty{padding:28px 20px;color:var(--sub);text-align:center}
+.open{display:flex;justify-content:flex-end;padding:0 20px 18px}
+.open a{color:var(--accent);font-size:14px}
+/* 대화법 */
+.techs{display:none;border-top:1px solid var(--line);padding:14px clamp(14px,2.5vw,28px) 16px}
+body.talk .techs{display:block}
+.techs h3{margin:0 0 10px;font-size:14px;font-weight:600;color:var(--sub);letter-spacing:.02em}
+.techs h3 b{color:var(--ink)}
+.tlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(clamp(200px,22vw,270px),1fr));gap:6px}
+.tchip{display:grid;grid-template-columns:auto 1fr;column-gap:8px;align-items:baseline;padding:9px 12px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);
+  font:inherit;font-size:15px;font-weight:500;text-align:left;cursor:pointer;min-width:0}
+.tchip:hover{background:var(--hover);border-color:var(--line-strong)}
+.tchip:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.tchip .no{color:var(--accent);font-weight:600}
+.tchip small{grid-column:2;font-size:12px;font-weight:400;color:var(--sub);line-height:1.45;margin-top:2px}
+.cell .go.tn{color:var(--accent);font-size:15px;font-weight:600}
+.badge{display:inline-flex;align-items:baseline;gap:8px;margin-top:6px;font-size:15px;font-weight:600;color:var(--accent)}
+.badge small{font-size:12px;font-weight:400;color:var(--sub)}
+.panel:focus{outline:none}
+.msg{animation:pop .28s ease-out both}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.msg.typing .tx{display:none}
+.msg .dots3{display:none}
+.msg.typing .dots3{display:inline-flex;gap:5px;padding:6px 2px}
+.dots3 i{width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.35;animation:blink 1s infinite}
+.dots3 i:nth-child(2){animation-delay:.15s}.dots3 i:nth-child(3){animation-delay:.3s}
+@keyframes blink{50%{opacity:1}}
+.msg .by em{font-style:normal;margin-left:6px;padding:0 6px;border:1px solid currentColor;border-radius:8px;font-size:11px}
+.lesson{margin:4px 20px 18px;padding:14px 16px;border-left:4px solid var(--band-yellow);background:var(--head);animation:pop .35s ease-out both}
+.lesson .lh{font-size:13px;color:var(--sub);margin-bottom:2px}
+.lesson .lh b{display:block;font-size:clamp(18px,1.9vw,22px);color:var(--ink);font-weight:600;margin-top:2px}
+.lesson .say{margin:10px 0;padding:10px 14px;background:var(--sheet);border:1px solid var(--line);font-size:clamp(15px,1.55vw,18px);font-weight:500;line-height:1.55}
+.lesson .say small{display:block;font-size:12px;font-weight:400;color:var(--sub);margin-bottom:2px}
+.lesson p{margin:0;font-size:clamp(15px,1.5vw,18px);line-height:1.65}
+.modes{display:inline-flex;margin-top:10px;border:1px solid var(--line)}
+.modes[hidden]{display:none}
+.modes button{font:inherit;font-size:13px;padding:5px 12px;background:transparent;color:var(--sub);border:0;cursor:pointer}
+.modes button[aria-pressed="true"]{background:var(--ink);color:var(--sheet)}
+.modes button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.pf{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;padding:0 20px 18px}
+.pf .src{font-size:12px;color:var(--sub)}
+.pf .acts{display:flex;align-items:center;gap:12px;margin-left:auto}
+.pf a{color:var(--accent);font-size:14px}
+#chatNext{font:inherit;font-size:15px;font-weight:600;background:var(--accent);color:#fff;border:0;padding:8px 16px;cursor:pointer}
+#chatNext[hidden],.chat[hidden]{display:none}
+.gapline{display:flex;align-items:center;gap:10px;margin:6px 0;font-size:13px;color:var(--sub);animation:pop .28s ease-out both}
+.gapline::before,.gapline::after{content:"";flex:1;border-top:1px dashed var(--line-strong)}
+.ph .cat .when{font-weight:600;color:var(--ink)}
+#chatNext:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<div class="sheet">
+  <div class="band top"><span></span><span></span></div>
+  <div class="head">
+    <span class="year">2026학년도</span>
+    <h1>체육교사 업무분장표</h1>
+    <span class="who">담당 · <b>체육교사 B</b></span>
+  </div>
+  <div class="band bot"><span></span><span></span></div>
+  <table><tbody id="rows"></tbody></table>
+  <div class="techs">
+    <h3><b>AI 대화법 8</b> · 대화가 흘러가는 순서대로</h3>
+    <div class="tlist" id="techList"></div>
+  </div>
+  <div class="foot">
+    <span class="legend"><i></i>학생이 직접 쓰는 도구</span>
+    <div class="ctrls">
+      <button type="button" id="btnTalk" aria-pressed="false">대화로 보기</button>
+      <button type="button" id="btnDots" aria-pressed="false">●</button>
+    </div>
+  </div>
+</div>
+
+<div class="chat" id="chat" hidden role="dialog" aria-modal="true" aria-labelledby="chatTitle">
+  <div class="panel" id="panel" tabindex="-1">
+    <div class="band top"><span></span><span></span></div>
+    <div class="ph">
+      <div><div class="cat" id="chatCat"></div><h2 id="chatTitle"></h2><div class="badge" id="chatBadge"></div>
+        <div class="modes" id="chatModes" role="group" aria-label="대화 고르기"><button type="button" data-m="ideal">이렇게 말하면 빨라요</button><button type="button" data-m="real">실제 내 첫 대화</button></div></div>
+      <button type="button" id="chatClose">닫기</button>
+    </div>
+    <div class="msgs" id="chatMsgs" aria-live="polite"></div>
+    <div id="chatLesson"></div>
+    <div class="pf">
+      <span class="src" id="chatSrc"></span>
+      <span class="acts"><span id="chatOpen"></span><button type="button" id="chatNext">다음 ▸</button></span>
+    </div>
+  </div>
+</div>
+
+<script>
+const PUBLIC = true; // 참가자용(QR) 화면이면 true
+const BASE = "https://bbonng.github.io/";
+
+const TECH = {};
+const BOARD = [
+ {
+  "cat": "수업",
+  "note": "평가·기록 포함",
+  "items": [
+   {
+    "name": "공간작전판",
+    "stu": true,
+    "url": "flagboard",
+    "chat": []
+   },
+   {
+    "name": "작전 설계도",
+    "stu": true,
+    "url": "flagplan",
+    "chat": []
+   },
+   {
+    "name": "LED 페이서",
+    "stu": true,
+    "url": "ledpacermaker1",
+    "chat": []
+   },
+   {
+    "name": "스쿼트 챌린지",
+    "stu": true,
+    "url": "squatchallenge",
+    "chat": []
+   },
+   {
+    "name": "코트의 비밀",
+    "stu": true,
+    "url": "pickleballtest",
+    "chat": []
+   },
+   {
+    "name": "점수 조회",
+    "stu": true,
+    "url": null,
+    "demo": "demo/score.html",
+    "chat": []
+   },
+   {
+    "name": "복식 대진표",
+    "stu": false,
+    "url": "doublespickle/league.html",
+    "chat": []
+   },
+   {
+    "name": "복식조 편성",
+    "stu": false,
+    "url": "doublespickle",
+    "chat": []
+   },
+   {
+    "name": "백워드 설계 도우미",
+    "stu": false,
+    "url": "bongs",
+    "chat": []
+   },
+   {
+    "name": "세특",
+    "stu": false,
+    "url": null,
+    "pubNote": "세특은 다른 선생님이 연수에서 다루셔서 도구는 넣지 않았어요. 대신 이렇게 대화했어요.",
+    "chat": [
+     {
+      "who": "t",
+      "text": "피클볼 세특을 쓰자. 붙이는 시트에 11개 반 점수가 다 있어.\n조건: 반별 상위 7~10명, 500바이트 미만, 횟수 같은 숫자는 쓰지 말 것, 학생이 안 한 활동(심판 등)은 쓰지 말 것.\n이 문장 느낌이 내가 원하는 거야: '연속된 랠리를 안정적으로 이어 가며 페어플레이를 실천함.'\n다 쓰고 나서 같은 문장이 겹치는지도 검사해."
+     },
+     {
+      "who": "ai",
+      "text": "조건 네 개와 예시 문장을 기준으로 101명 썼어요.\n검사: 500바이트 넘는 것 0 · 숫자 0 · 같은 문장 0"
+     },
+     {
+      "who": "t",
+      "text": "3반 ○○○은 서술형이 C야. 서술형 칭찬은 빼."
+     },
+     {
+      "who": "ai",
+      "text": "고쳤어요. C·D인 영역은 칭찬하지 않도록 101명 전체에 같은 규칙을 다시 적용했어요."
+     }
+    ],
+    "tech": 3
+   },
+   {
+    "name": "원탁회의",
+    "stu": false,
+    "url": "talksuup",
+    "chat": []
+   }
+  ]
+ },
+ {
+  "cat": "스포츠클럽",
+  "items": [
+   {
+    "name": "가정통신문+참가 동의서",
+    "stu": false,
+    "url": null,
+    "demo": "demo/consent.html",
+    "chat": []
+   },
+   {
+    "name": "친선경기 투표",
+    "stu": true,
+    "url": null,
+    "demo": "demo/vote.html",
+    "chat": []
+   }
+  ]
+ },
+ {
+  "cat": "체육대회",
+  "items": [
+   {
+    "name": "체육대회 안내",
+    "stu": false,
+    "url": "2026sportsday",
+    "chat": []
+   },
+   {
+    "name": "도우미 임무표",
+    "stu": false,
+    "url": null,
+    "demo": "demo/task.html",
+    "chat": []
+   },
+   {
+    "name": "트랙 계산",
+    "stu": false,
+    "url": "maketrack",
+    "chat": []
+   }
+  ]
+ },
+ {
+  "cat": "체육과 업무",
+  "items": [
+   {
+    "name": "체육과 시간표",
+    "stu": false,
+    "url": null,
+    "demo": "demo/timetable.html",
+    "chat": []
+   },
+   {
+    "name": "수업관리 앱",
+    "stu": false,
+    "url": null,
+    "demo": "demo/suup.html",
+    "chat": []
+   }
+  ]
+ }
+];
+
+const $ = s => document.querySelector(s);
+const href = u => /^https?:/.test(u) ? u : BASE + u + (u.endsWith(".html") ? "" : "/");
+const link = it => PUBLIC && it.demo ? it.demo : (it.url ? href(it.url) : null);
+if (PUBLIC) BOARD.forEach(r => { r.items = r.items.filter(it => it.pub !== false); });
+let talk = !PUBLIC && location.hash === "#talk";
+let lastFocus = null;
+let cur = null; // {it, mode, shown, lessonShown}
+const lines = () => cur ? (cur.mode === "real" ? (cur.it.real || []) : cur.it.chat) : [];
+
+function render(){
+  const rows = $("#rows");
+  rows.textContent = "";
+  BOARD.forEach((row, ri) => {
+    const tr = document.createElement("tr");
+    const th = document.createElement("th");
+    th.textContent = row.cat;
+    const sm = document.createElement("small");
+    sm.textContent = (row.note ? row.note + " · " : "") + row.items.length + "개";
+    th.appendChild(sm);
+    const td = document.createElement("td");
+    const wrap = document.createElement("div");
+    wrap.className = "cells";
+    row.items.forEach((it, ii) => {
+      let el;
+      const L = link(it), pubChat = PUBLIC && it.pubNote;
+      if (!talk && L){
+        el = document.createElement("a");
+        el.href = L;
+        el.target = "_blank"; el.rel = "noopener";
+      } else {
+        el = document.createElement("button");
+        el.type = "button";
+        if (talk || pubChat) el.addEventListener("click", () => openChat(ri, ii, el));
+      }
+      el.className = "cell" + (it.stu ? " stu" : "") + (!talk && !L && !pubChat ? " nolink" : "") + (talk && !it.chat.length ? " nochat" : "");
+      const dot = document.createElement("span"); dot.className = "dot" + (it.stu ? " on" : ""); dot.setAttribute("aria-hidden","true");
+      const nm = document.createElement("span"); nm.className = "nm"; nm.textContent = it.name;
+      const go = document.createElement("span"); go.setAttribute("aria-hidden","true");
+      if (talk && it.tech){ go.className = "go tn"; go.textContent = TECH[it.tech].no; el.title = TECH[it.tech].name; }
+      else { go.className = "go"; go.textContent = talk ? "" : (L ? "↗" : pubChat ? "대화" : ""); }
+      el.append(dot, nm, go);
+      if (!talk && !L && !pubChat) el.title = "공개 주소 없음";
+      wrap.appendChild(el);
+    });
+    td.appendChild(wrap);
+    tr.append(th, td);
+    rows.appendChild(tr);
+  });
+  document.body.classList.toggle("talk", talk);
+  const bt = $("#btnTalk");
+  if (bt){ bt.setAttribute("aria-pressed", String(talk)); bt.textContent = talk ? "도구로 보기" : "대화로 보기"; }
+}
+
+function renderTechs(){
+  const box = $("#techList"); box.textContent = "";
+  Object.keys(TECH).forEach(k => {
+    const t = TECH[k];
+    let at = null;
+    BOARD.some((row, ri) => row.items.some((it, ii) => it.name === t.rep && (at = [ri, ii])));
+    if (!at) BOARD.some((row, ri) => row.items.some((it, ii) => it.tech == k && (at = [ri, ii])));
+    const b = document.createElement("button"); b.type = "button"; b.className = "tchip";
+    const no = document.createElement("span"); no.className = "no"; no.textContent = t.no;
+    const nm = document.createElement("span"); nm.textContent = t.name;
+    const sm = document.createElement("small"); sm.textContent = t.say;
+    b.append(no, nm, sm);
+    if (at) b.addEventListener("click", () => openChat(at[0], at[1], b));
+    box.appendChild(b);
+  });
+}
+
+function bubble(m){
+  if (m.who === "gap"){
+    const g = document.createElement("div"); g.className = "gapline"; g.textContent = m.text; return g;
+  }
+  const d = document.createElement("div"); d.className = "msg " + m.who;
+  const by = document.createElement("span"); by.className = "by";
+  by.textContent = m.who === "t" ? "체육교사 B" : "AI";
+  if (m.ex){ const e = document.createElement("em"); e.textContent = "예시"; by.appendChild(e); }
+  const dots = document.createElement("span"); dots.className = "dots3"; dots.innerHTML = "<i></i><i></i><i></i>";
+  const tx = document.createElement("span"); tx.className = "tx"; tx.textContent = m.text;
+  d.append(by, dots, tx);
+  return d;
+}
+
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let typingTimer = 0;
+
+function showNext(){
+  if (!cur) return;
+  const box = $("#chatMsgs");
+  // 아직 '입력 중'이면 바로 보여 주기
+  const typing = box.querySelector(".msg.typing");
+  if (typing){ clearTimeout(typingTimer); typing.classList.remove("typing"); return; }
+  const chat = lines();
+  if (cur.shown < chat.length){
+    const m = chat[cur.shown++];
+    const d = bubble(m);
+    box.appendChild(d);
+    if (m.who === "ai" && !reduce){
+      d.classList.add("typing");
+      typingTimer = setTimeout(() => { d.classList.remove("typing"); d.scrollIntoView({block:"nearest", behavior:"smooth"}); }, 650);
+    }
+    d.scrollIntoView({block:"nearest", behavior: reduce ? "auto" : "smooth"});
+  } else if (!PUBLIC && !cur.lessonShown && cur.it.tech){
+    cur.lessonShown = true;
+    showLesson();
+  }
+  updateNext();
+}
+
+function showLesson(){
+  const t = TECH[cur.it.tech];
+  const L = $("#chatLesson"); L.textContent = "";
+  const card = document.createElement("div"); card.className = "lesson";
+  const lh = document.createElement("div"); lh.className = "lh";
+  lh.textContent = cur.mode === "real" ? "그때 이렇게 말했다면" : "이 대화에서 쓴 대화법";
+  const nm = document.createElement("b"); nm.textContent = t.no + " " + t.name; lh.appendChild(nm);
+  const say = document.createElement("div"); say.className = "say";
+  const sl = document.createElement("small"); sl.textContent = "따라 쓸 말"; say.append(sl, t.say);
+  const p = document.createElement("p"); p.textContent = cur.it.tip || t.why;
+  card.append(lh, say, p);
+  L.appendChild(card);
+  card.scrollIntoView({block:"nearest", behavior: reduce ? "auto" : "smooth"});
+}
+
+function updateNext(){
+  const n = $("#chatNext"), total = lines().length;
+  const done = cur.shown >= total && (PUBLIC || cur.lessonShown || !cur.it.tech);
+  n.hidden = !total || done;
+  n.textContent = cur.shown >= total ? "그래서, 대화법 ▸" : "다음 ▸  " + cur.shown + " / " + total;
+}
+
+function openChat(ri, ii, from){
+  const row = BOARD[ri], it = row.items[ii];
+  lastFocus = from;
+  cur = { it, mode: cur && cur.it === it ? cur.mode : "ideal", shown:0, lessonShown:false, row };
+  clearTimeout(typingTimer);
+  const cat = $("#chatCat"); cat.textContent = row.cat;
+  if (it.when){ const w = document.createElement("b"); w.className = "when"; w.textContent = it.when; cat.append(" · ", w); }
+  $("#chatTitle").textContent = it.name;
+  const badge = $("#chatBadge"); badge.textContent = "";
+  if (it.tech && TECH[it.tech]){ const t = TECH[it.tech]; badge.textContent = t.no + " " + t.name; }
+  const modes = $("#chatModes");
+  modes.hidden = PUBLIC || !(it.real && it.real.length);
+  if (modes.hidden) cur.mode = "ideal";
+  modes.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.m === cur.mode)));
+  $("#chatLesson").textContent = "";
+  const box = $("#chatMsgs"); box.textContent = "";
+  if (PUBLIC && it.pubNote){ const g = document.createElement("div"); g.className = "gapline"; g.textContent = it.pubNote; box.appendChild(g); }
+  if (!lines().length){
+    const p = document.createElement("p"); p.className = "empty"; p.textContent = "이 도구의 대화를 아직 넣지 않았어요.";
+    box.appendChild(p);
+  }
+  $("#chatSrc").textContent = !lines().length || PUBLIC ? "" : cur.mode === "real"
+    ? "실제로 처음 나눈 대화 · 선생님 말은 그대로, AI 말은 줄임"
+    : "모범 대화 · 처음부터 이렇게 말했다면";
+  const open = $("#chatOpen"); open.textContent = "";
+  if (link(it)){
+    const a = document.createElement("a"); a.href = link(it); a.target = "_blank"; a.rel = "noopener";
+    a.textContent = "완성된 도구 열기 ↗"; open.appendChild(a);
+  }
+  $("#chat").hidden = false;
+  $("#panel").scrollTop = 0;
+  if (lines().length){ showNext(); }
+  updateNext();
+  $("#panel").focus();
+}
+function closeChat(){ clearTimeout(typingTimer); $("#chat").hidden = true; cur = null; if (lastFocus) lastFocus.focus(); }
+
+$("#chatClose").addEventListener("click", closeChat);
+function setMode(m){
+  if (!cur || $("#chatModes").hidden || cur.mode === m) return;
+  cur.mode = m;
+  const r = cur.row, ri = BOARD.indexOf(r), ii = r.items.indexOf(cur.it);
+  openChat(ri, ii, lastFocus);
+}
+$("#chatModes").addEventListener("click", e => { const b = e.target.closest("button"); if (b){ e.stopPropagation(); setMode(b.dataset.m); } });
+$("#chatNext").addEventListener("click", e => { e.stopPropagation(); showNext(); });
+$("#chat").addEventListener("click", e => {
+  if (e.target.id === "chat") return closeChat();
+  if (e.target.closest("a,button")) return;
+  showNext(); // 패널 아무 곳이나 누르면 다음 말
+});
+$("#btnTalk").addEventListener("click", () => { talk = !talk; render(); });
+$("#btnDots").addEventListener("click", () => {
+  const on = document.body.classList.toggle("dots");
+  $("#btnDots").setAttribute("aria-pressed", String(on));
+});
+document.addEventListener("keydown", e => {
+  const open = !$("#chat").hidden;
+  if (open){
+    if (e.key === "Escape") return closeChat();
+    if (e.key === "r" || e.key === "R"){ setMode(cur && cur.mode === "real" ? "ideal" : "real"); return; }
+    if (e.target.closest && e.target.closest("button,a")) return; // 버튼에 초점이 있으면 버튼이 알아서
+    if ([" ", "Enter", "ArrowRight", "ArrowDown", "PageDown"].includes(e.key)){ e.preventDefault(); showNext(); }
+    else if (e.key === "End"){ e.preventDefault(); while (cur && (cur.shown < lines().length || (!PUBLIC && cur.it.tech && !cur.lessonShown))) showNext(); const t = $("#chatMsgs .typing"); if (t) t.classList.remove("typing"); }
+    return;
+  }
+  if (e.target.closest && e.target.closest("input,textarea")) return;
+  if (e.key === "d" || e.key === "D") $("#btnDots").click();
+  if (!PUBLIC && (e.key === "t" || e.key === "T")) $("#btnTalk").click();
+});
+if (PUBLIC){
+  $("#btnTalk").remove();
+  document.querySelector(".techs").remove();
+  const n = document.createElement("span"); n.className = "pubnote"; n.textContent = "학생·교사 정보가 담긴 도구는 연수용 예시 화면으로 열려요";
+  document.querySelector(".foot").prepend(n);
+} else renderTechs();
+render();
+</script>
+
+</body>
+</html>

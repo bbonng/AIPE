@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>체육과 통합 시간표 · 예시</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="demo.css">
+<style>
+:root{--g1:#2F6FD6;--g1s:#E4EEFC;--g2:#2E8B57;--g2s:#E2F3E9;--g3:#D9822B;--g3s:#FCEEDD}
+.grid-wrap{overflow-x:auto;background:#fff;border:1px solid var(--line)}
+table{min-width:620px}
+td{vertical-align:top;height:74px;padding:4px;text-align:left}
+th.p{width:44px}
+td.hot{background:#FDECEA;box-shadow:inset 0 0 0 2px var(--no)}
+.cnt{display:block;font-size:11px;color:var(--sub);margin-bottom:2px}
+td.hot .cnt{color:var(--no);font-weight:600}
+.k{display:inline-block;font-size:12px;padding:1px 5px;margin:1px;border-radius:3px;white-space:nowrap}
+.k.g1{background:var(--g1s);color:var(--g1)}.k.g2{background:var(--g2s);color:var(--g2)}.k.g3{background:var(--g3s);color:var(--g3)}
+.k.dim{opacity:.25}.k.me{outline:2px solid var(--ink)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--sub);margin:10px 0}
+.legend i{display:inline-block;width:10px;height:10px;margin-right:4px;vertical-align:-1px}
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.stat div{background:#fff;border:1px solid var(--line);padding:10px;text-align:center}.stat b{display:block;font-size:22px}
+</style>
+</head>
+<body>
+<div class="bands"><i></i><i></i></div>
+<div class="demo-flag"><b>연수용 예시 화면</b> · 선생님 이름과 시간표는 가상이에요</div>
+<main class="wrap wide">
+  <h1>체육과 통합 시간표</h1>
+  <p class="lead">선생님 6명의 시간표를 한 장에 · 시간마다 몇 반이 동시에 체육을 하는지</p>
+  <div class="stat"><div><b id="s4">0</b>4반 이상 겹침</div><div><b id="s3">0</b>세 학년 다 겹침</div><div><b id="sb">-</b>제일 붐비는 날</div></div>
+  <div class="chips" id="who"></div>
+  <div class="legend"><span><i style="background:var(--g1)"></i>1학년</span><span><i style="background:var(--g2)"></i>2학년</span><span><i style="background:var(--g3)"></i>3학년</span><span><i style="background:#FDECEA;outline:2px solid var(--no)"></i>4반 이상 동시 수업</span></div>
+  <div class="grid-wrap"><table><thead><tr><th class="p">교시</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th></tr></thead><tbody id="tb"></tbody></table></div>
+  <a class="back" href="../">← 업무분장표로</a>
+</main>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const T=["A","B","C","D","E","F"], D=["월","화","수","목","금"];
+// 가상 시간표: 교사마다 학년 하나를 주로 맡고, 정해진 규칙으로 배치
+let seed=7;const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
+const S={}; // key d-p -> [{t,g,c}]
+const GR={A:1,B:1,C:2,D:2,E:3,F:3};
+T.forEach(t=>{let n=0;for(let d=0;d<5;d++)for(let p=1;p<=7;p++){const busy=(d===1&&p<=3)?.8:.42;if(rnd()<busy&&n<19){n++;const g=rnd()<.8?GR[t]:1+Math.floor(rnd()*3);const c=1+Math.floor(rnd()*11);(S[d+"-"+p]=S[d+"-"+p]||[]).push({t,g,c});}}});
+let me="";
+function draw(){
+  $("#who").innerHTML=['전체',...T].map(t=>`<button class="chip" aria-pressed="${(t==='전체'?'':t)===me}">${t==='전체'?t:'교사 '+t}</button>`).join("");
+  $$("#who .chip").forEach(b=>b.onclick=()=>{me=b.textContent==='전체'?'':b.textContent.slice(-1);draw();});
+  let h4=0,h3=0;const byDay=[0,0,0,0,0];
+  $("#tb").innerHTML=[1,2,3,4,5,6,7].map(p=>`<tr><th class="p">${p}</th>${D.map((_,d)=>{const L=S[d+"-"+p]||[];const gs=new Set(L.map(x=>x.g));if(L.length>=4){h4++;byDay[d]++;}if(gs.size===3&&L.length>=3)h3++;
+    return `<td class="${L.length>=4?'hot':''}"><span class="cnt">${L.length?L.length+'반':''}${gs.size===3?' · 전학년':''}</span>${L.map(x=>`<span class="k g${x.g} ${me&&x.t!==me?'dim':''} ${x.t===me?'me':''}">${x.g}-${x.c} ${x.t}</span>`).join("")}</td>`;}).join("")}</tr>`).join("");
+  $("#s4").textContent=h4+"번";$("#s3").textContent=h3+"번";$("#sb").textContent=D[byDay.indexOf(Math.max(...byDay))]+"요일";
+}
+draw();
+</script>
+</body>
+</html>

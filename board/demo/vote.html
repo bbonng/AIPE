@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>친선경기 참가 투표 · 예시</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="demo.css">
+<style>
+.views{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line-strong);margin-bottom:14px}
+.views button{font:inherit;padding:10px;border:0;background:#fff;cursor:pointer;color:var(--sub)}
+.views button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.sum div{background:var(--sheet);border:1px solid var(--line);padding:10px;text-align:center}
+.sum b{display:block;font-size:24px}
+.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px}
+.st{font:inherit;display:flex;justify-content:space-between;align-items:center;padding:12px;border:1px solid var(--line);background:#fff;cursor:pointer;text-align:left}
+.st:hover{border-color:var(--line-strong)}
+table td:first-child,table th:first-child{text-align:left}
+.reason{color:var(--no);font-size:14px;text-align:left}
+.ans{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.ans button{font:inherit;font-size:18px;font-weight:600;padding:16px;border:1px solid var(--line-strong);background:#fff;cursor:pointer}
+.ans button[aria-pressed="true"].y{background:var(--ok);color:#fff;border-color:var(--ok)}
+.ans button[aria-pressed="true"].n{background:var(--no);color:#fff;border-color:var(--no)}
+#why[hidden]{display:none}
+.lock{font-size:12px;color:var(--sub)}
+</style>
+</head>
+<body>
+<div class="bands"><i></i><i></i></div>
+<div class="demo-flag"><b>연수용 예시 화면</b> · 이름은 모두 가상이에요 · 저장되지 않아요</div>
+<main class="wrap">
+  <h1>피구 친선경기 참가 투표</h1>
+  <p class="lead">11월 ○일(토) 오전 · ○○중 체육관 · 스포츠클럽 등록자</p>
+  <div class="views" role="group" aria-label="화면 고르기">
+    <button data-v="stu" aria-pressed="true">학생 화면 (카톡 링크)</button>
+    <button data-v="tch" aria-pressed="false">선생님 화면</button>
+  </div>
+
+  <section id="stu">
+    <div class="chips" style="margin-bottom:10px" id="gr"></div>
+    <p class="muted" style="margin:0 0 8px">내 이름을 눌러 투표해요. 다른 친구는 찬성/반대만 보이고, 비고와 사유는 안 보여요.</p>
+    <div class="list" id="list"></div>
+  </section>
+
+  <section id="tch" hidden>
+    <div class="sum"><div><b id="cY">0</b>참가</div><div><b id="cN">0</b>불참</div><div><b id="cW">0</b>미투표</div></div>
+    <div class="card" style="padding:0;overflow:auto">
+      <table><thead><tr><th>이름</th><th>학년</th><th>상태</th><th>비고 · 불참 사유</th></tr></thead><tbody id="tb"></tbody></table>
+    </div>
+    <button class="btn ghost" id="copy">미투표 학생 이름 복사</button>
+  </section>
+  <a class="back" href="../">← 업무분장표로</a>
+</main>
+
+<dialog id="dlg"><div class="in">
+  <h2 id="dn" style="margin:0 0 4px"></h2>
+  <p class="muted" style="margin:0">친선경기에 참가할 수 있나요?</p>
+  <div class="ans"><button class="y" data-a="y">참가</button><button class="n" data-a="n">불참</button></div>
+  <label for="memo">비고 <span class="muted">(예: 조금 늦어요, 일찍 가야 해요)</span></label>
+  <input id="memo" autocomplete="off">
+  <div id="why" hidden><label for="rs">불참 사유 <span class="lock">🔒 선생님만 봐요</span></label><input id="rs" autocomplete="off" placeholder="말하기 어려우면 비워 둬도 돼요"></div>
+  <div class="row" style="margin-top:14px"><button class="btn ghost" id="cancel">닫기</button><button class="btn" id="ok" style="flex:1">저장 (예시)</button></div>
+</div></dialog>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const P=[ // 가상 명단
+ ["김하늘",1,"y",""],["이바다",1,"n","","가족 행사"],["박구름",1,"",""],["최노을",1,"y","조금 늦어요"],["정새벽",1,"y",""],
+ ["강들판",2,"y",""],["윤시내",2,"",""],["장솔숲",2,"n","","병원 예약"],["임여름",2,"y","일찍 가야 해요"],["한가람",2,"y",""],["오별빛",2,"",""],
+ ["서산들",3,"y",""],["신바람",3,"n","",""],["권다솜",3,"y",""],["황보라",3,"",""],["안이슬",3,"y",""]
+].map(([n,g,s,m,r])=>({n,g,s,m:m||"",r:r||""}));
+let G=2, cur=null, pick="";
+function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("show");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("show"),2200);}
+function tag(s){return s==="y"?'<span class="tag ok">참가</span>':s==="n"?'<span class="tag no">불참</span>':'<span class="tag wait">미투표</span>';}
+const esc=t=>t.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function draw(){
+  $("#gr").innerHTML=[1,2,3].map(g=>`<button class="chip" data-g="${g}" aria-pressed="${g===G}">${g}학년</button>`).join("");
+  $$("#gr .chip").forEach(b=>b.onclick=()=>{G=+b.dataset.g;draw();});
+  $("#list").innerHTML=P.filter(p=>p.g===G).map((p,i)=>`<button class="st" data-i="${P.indexOf(p)}"><span>${esc(p.n)}</span>${tag(p.s)}</button>`).join("");
+  $$("#list .st").forEach(b=>b.onclick=()=>open(+b.dataset.i));
+  $("#tb").innerHTML=P.map(p=>`<tr><td>${esc(p.n)}</td><td>${p.g}</td><td>${tag(p.s)}</td><td>${esc(p.m)}${p.r?`<div class="reason">사유: ${esc(p.r)}</div>`:(p.s==="n"?'<div class="muted">사유 안 적음</div>':"")}</td></tr>`).join("");
+  $("#cY").textContent=P.filter(p=>p.s==="y").length;$("#cN").textContent=P.filter(p=>p.s==="n").length;$("#cW").textContent=P.filter(p=>!p.s).length;
+}
+function setPick(a){pick=a;$$(".ans button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.a===a)));$("#why").hidden=a!=="n";}
+function open(i){cur=P[i];$("#dn").textContent=cur.n;$("#memo").value=cur.m;$("#rs").value=cur.r;setPick(cur.s);$("#dlg").showModal();}
+$$(".ans button").forEach(b=>b.onclick=()=>setPick(b.dataset.a));
+$("#cancel").onclick=()=>$("#dlg").close();
+$("#ok").onclick=()=>{if(!pick){toast("참가 또는 불참을 골라 주세요");return;}cur.s=pick;cur.m=$("#memo").value.trim();cur.r=pick==="n"?$("#rs").value.trim():"";$("#dlg").close();draw();toast("바뀌었어요. 예시라 새로고침하면 처음으로 돌아가요.");};
+$$(".views button").forEach(b=>b.onclick=()=>{$$(".views button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));$("#stu").hidden=b.dataset.v!=="stu";$("#tch").hidden=b.dataset.v!=="tch";});
+$("#copy").onclick=()=>{const t=P.filter(p=>!p.s).map(p=>p.n).join(", ");try{navigator.clipboard.writeText(t);}catch(e){}toast("복사: "+t);};
+draw();
+</script>
+</body>
+</html>

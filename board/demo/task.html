@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>체육대회 도우미 임무표 · 예시</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="demo.css">
+<style>
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line-strong);margin-bottom:14px}
+.tabs button{font:inherit;padding:10px 4px;border:0;background:#fff;cursor:pointer;color:var(--sub)}
+.tabs button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.ev{border-left:4px solid var(--accent);padding-left:12px;margin:14px 0}
+.ev b{font-size:17px}.ev .t{font-size:13px;color:var(--sub);margin-left:6px}
+.duty{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin-top:8px;font-size:15px}
+.duty dt{color:var(--sub)}.duty dd{margin:0}
+.mine{background:var(--warn-soft);padding:2px 6px}
+.hl{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:start;padding:10px 0;border-top:1px solid var(--line)}
+.hl .num{display:inline-flex;gap:4px;flex-wrap:wrap}
+.hl .num span{font-size:12px;background:var(--accent-soft);color:var(--accent);padding:2px 6px}
+</style>
+</head>
+<body>
+<div class="bands"><i></i><i></i></div>
+<div class="demo-flag"><b>연수용 예시 화면</b> · 선생님·학생 이름은 모두 가상이에요</div>
+<main class="wrap">
+  <h1>체육대회 도우미 임무표</h1>
+  <p class="lead">경기 5개 · 선생님 6명 · 학생 도우미 9명 (예시)</p>
+  <div class="tabs" role="group" aria-label="보기 고르기">
+    <button data-t="ev" aria-pressed="true">경기별</button>
+    <button data-t="tc" aria-pressed="false">선생님별</button>
+    <button data-t="st" aria-pressed="false">도우미 명단</button>
+  </div>
+  <section id="ev"></section>
+  <section id="tc" hidden><div class="chips" id="tchips"></div><div id="tview" style="margin-top:12px"></div></section>
+  <section id="st" hidden class="card"></section>
+  <a class="back" href="../">← 업무분장표로</a>
+</main>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const T=["체육교사 A","체육교사 B","체육교사 C","체육교사 D","체육교사 E","체육교사 F"];
+const EV=[
+ {n:"이어달리기",t:"09:30",d:{"소집":["체육교사 C"],"출발":["체육교사 A"],"결승":["체육교사 D","체육교사 E"],"기록":["체육교사 F"]},h:"3학년 도우미: 배턴 정리 · 2학년 도우미: 결승선 줄"},
+ {n:"8자 줄넘기",t:"10:10",d:{"소집":["체육교사 C"],"계수":["체육교사 B","체육교사 D"],"기록":["체육교사 F"]},h:"반별 계수 보조 1명씩"},
+ {n:"미션 달리기",t:"10:50",d:{"출발":["체육교사 A"],"미션 판정":["체육교사 E","체육교사 B"],"기록":["체육교사 F"]},h:"미션 카드 놓기 · 회수"},
+ {n:"2인 3각",t:"11:30",d:{"소집":["체육교사 C"],"출발":["체육교사 A"],"결승":["체육교사 D"],"기록":["체육교사 F"]},h:"끈 나눠 주기 · 회수"},
+ {n:"줄다리기",t:"12:10",d:{"심판":["체육교사 A","체육교사 B"],"안전":["체육교사 D","체육교사 E"],"기록":["체육교사 F"]},h:"줄 정리 · 안전선 지키기"}
+];
+const ST=[["김하늘","3-1",[1,3]],["이바다","3-2",[1,5]],["박구름","3-4",[2,4]],["최노을","2-3",[1,2]],["정새벽","2-5",[3]],["강들판","2-7",[4,5]],["윤시내","1-2",[2]],["장솔숲","1-6",[3,4]],["임여름","1-9",[5]]];
+let me="체육교사 B";
+function evHtml(e,i,who){return `<div class="ev"><b>${i+1}. ${e.n}</b><span class="t">${e.t}</span><dl class="duty">${Object.entries(e.d).map(([k,v])=>`<dt>${k}</dt><dd>${v.map(x=>x===who?`<span class="mine">${x}</span>`:x).join(", ")}</dd>`).join("")}<dt>도우미</dt><dd>${e.h}</dd></dl></div>`;}
+$("#ev").innerHTML=`<div class="card">${EV.map((e,i)=>evHtml(e,i)).join("")}</div>`;
+function tc(){
+  $("#tchips").innerHTML=T.map(t=>`<button class="chip" aria-pressed="${t===me}">${t}</button>`).join("");
+  $$("#tchips .chip").forEach(b=>b.onclick=()=>{me=b.textContent;tc();});
+  const mine=EV.map((e,i)=>[e,i]).filter(([e])=>Object.values(e.d).some(v=>v.includes(me)));
+  $("#tview").innerHTML=`<div class="card"><h2>${me}의 하루</h2>${mine.map(([e,i])=>{const r=Object.entries(e.d).filter(([k,v])=>v.includes(me)).map(([k])=>k).join(", ");return `<div class="ev"><b>${e.t} ${e.n}</b><div style="margin-top:4px"><span class="mine">${r}</span></div></div>`;}).join("")||'<p class="muted">맡은 경기가 없어요.</p>'}</div>`;
+}
+tc();
+$("#st").innerHTML=`<h2>학생 도우미 (가상 명단)</h2>`+ST.map(([n,c,ev])=>`<div class="hl"><b>${n} <span class="muted">${c}</span></b><span class="num">${ev.map(i=>`<span>${i}. ${EV[i-1].n}</span>`).join("")}</span></div>`).join("");
+$$(".tabs button").forEach(b=>b.onclick=()=>{$$(".tabs button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));["ev","tc","st"].forEach(id=>$("#"+id).hidden=id!==b.dataset.t);});
+</script>
+</body>
+</html>

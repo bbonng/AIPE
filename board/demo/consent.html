@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>스포츠클럽 참가 동의서 · 예시</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="demo.css">
+<style>
+.step{display:none}.step.on{display:block}
+.steps{display:flex;gap:4px;margin-bottom:14px}.steps i{flex:1;height:4px;background:var(--line)}.steps i.on{background:var(--accent)}
+.doc{background:var(--head);padding:14px;font-size:15px;max-height:240px;overflow:auto}
+.doc h3{font-size:16px;margin:0 0 6px}.doc ul{margin:6px 0;padding-left:20px}
+.check{display:flex;gap:10px;align-items:flex-start;margin:14px 0;font-size:15px;color:var(--ink)}
+.check input{width:22px;height:22px;flex:none;margin-top:2px}
+canvas{display:block;width:100%;height:180px;background:#fff;border:1px dashed var(--line-strong);touch-action:none}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.role{font:inherit;padding:20px 10px;border:1px solid var(--line-strong);background:#fff;cursor:pointer;font-size:17px;font-weight:600}
+.role small{display:block;font-weight:400;font-size:13px;color:var(--sub);margin-top:4px}
+.role[aria-pressed="true"]{border:2px solid var(--accent);background:var(--accent-soft)}
+</style>
+</head>
+<body>
+<div class="bands"><i></i><i></i></div>
+<div class="demo-flag"><b>연수용 예시 화면</b> · 제출해도 아무 데도 저장되지 않아요</div>
+<main class="wrap">
+  <h1>학교스포츠클럽 참가 동의서</h1>
+  <p class="lead">○○중학교 · 2026학년도 2학기</p>
+  <div class="steps" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
+
+  <section class="card step on" data-s="0">
+    <h2>누가 작성하나요?</h2>
+    <div class="two">
+      <button class="role" data-r="학생" aria-pressed="false">학생<small>참가 신청</small></button>
+      <button class="role" data-r="보호자" aria-pressed="false">보호자<small>참가 동의</small></button>
+    </div>
+    <button class="btn full" style="margin-top:14px" data-next disabled id="n0">다음</button>
+  </section>
+
+  <section class="card step" data-s="1">
+    <h2>학생 정보</h2>
+    <div class="two"><div><label for="g">학년</label><select id="g"><option>1</option><option selected>2</option><option>3</option></select></div>
+    <div><label for="c">반</label><select id="c"></select></div></div>
+    <label for="n">학생 이름</label><input id="n" value="예시학생">
+    <label for="sp">희망 종목</label><select id="sp"><option>피구</option><option>피클볼</option><option>플래그풋볼</option><option>배드민턴</option></select>
+    <label for="ph" id="phL">보호자 연락처</label><input id="ph" value="010-0000-0000" inputmode="tel">
+    <button class="btn full" style="margin-top:14px" data-next>다음</button>
+  </section>
+
+  <section class="card step" data-s="2">
+    <h2>안내 및 동의</h2>
+    <div class="doc">
+      <h3>가정통신문 (예시 문구)</h3>
+      <p>학교스포츠클럽은 정규 수업 외 시간에 운영되며, 학생의 건강한 여가 활동과 교우 관계 형성을 돕습니다.</p>
+      <ul><li>운영 기간: 2026. 9. ~ 12.</li><li>운영 시간: 매주 수요일 방과 후 (16:30~17:30)</li><li>장소: 체육관, 테니스장</li><li>준비물: 운동복, 실내화, 물</li></ul>
+      <p>활동 중 발생할 수 있는 안전사고는 학교안전공제회 보상 기준에 따릅니다.</p>
+    </div>
+    <label class="check"><input type="checkbox" id="a1">위 내용을 읽었고, 참가에 동의합니다.</label>
+    <label class="check"><input type="checkbox" id="a2">연락과 안전 관리를 위한 이름·연락처 수집에 동의합니다. (활동 종료 후 파기)</label>
+    <button class="btn full" data-next id="n2" disabled>다음</button>
+  </section>
+
+  <section class="card step" data-s="3">
+    <h2 id="sigT">서명</h2>
+    <p class="muted" style="margin:0 0 8px">손가락이나 마우스로 서명해 주세요.</p>
+    <canvas id="pad" aria-label="서명 칸"></canvas>
+    <div class="row" style="margin-top:10px"><button class="btn ghost" id="clr">다시 쓰기</button><button class="btn" id="send" style="flex:1" disabled>제출</button></div>
+  </section>
+
+  <section class="card step" data-s="4" style="text-align:center">
+    <h2 style="font-size:20px">제출됐어요 (예시)</h2>
+    <p>실제 화면에서는 선생님 시트에 한 줄이 생기고,<br>안 낸 학생은 '미제출'로 따로 보여요.</p>
+    <p class="muted">이 예시 화면은 아무 데도 저장하지 않아요.</p>
+    <button class="btn ghost" onclick="location.reload()">처음부터 다시</button>
+  </section>
+  <a class="back" href="../">← 업무분장표로</a>
+</main>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+let step=0, role="";
+for(let i=1;i<=11;i++){const o=document.createElement("option");o.textContent=i;if(i===4)o.selected=true;$("#c").appendChild(o);}
+function go(n){step=n;$$(".step").forEach(e=>e.classList.toggle("on",+e.dataset.s===n));$$(".steps i").forEach((e,i)=>e.classList.toggle("on",i<=Math.min(n,3)));if(n===3)fit();window.scrollTo(0,0);}
+$$(".role").forEach(b=>b.onclick=()=>{role=b.dataset.r;$$(".role").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));$("#n0").disabled=false;$("#sigT").textContent=role+" 서명";});
+$$("[data-next]").forEach(b=>b.onclick=()=>go(step+1));
+const ag=()=>{$("#n2").disabled=!($("#a1").checked&&$("#a2").checked)};$("#a1").onchange=ag;$("#a2").onchange=ag;
+const cv=$("#pad"),cx=cv.getContext("2d");let drawing=false,drawn=false;
+function fit(){const r=cv.getBoundingClientRect(),d=devicePixelRatio||1;cv.width=r.width*d;cv.height=r.height*d;cx.scale(d,d);cx.lineWidth=2.5;cx.lineCap="round";cx.strokeStyle="#17202B";}
+function pt(e){const r=cv.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top];}
+cv.onpointerdown=e=>{drawing=true;cv.setPointerCapture(e.pointerId);cx.beginPath();cx.moveTo(...pt(e));};
+cv.onpointermove=e=>{if(!drawing)return;cx.lineTo(...pt(e));cx.stroke();if(!drawn){drawn=true;$("#send").disabled=false;}};
+cv.onpointerup=()=>drawing=false;
+$("#clr").onclick=()=>{cx.clearRect(0,0,cv.width,cv.height);drawn=false;$("#send").disabled=true;};
+$("#send").onclick=()=>go(4);
+</script>
+</body>
+</html>

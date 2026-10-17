@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>수업관리 · 예시</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="demo.css">
+<style>
+.app{max-width:440px;margin:0 auto;padding:16px 16px 48px}
+.top{display:flex;justify-content:space-between;align-items:baseline;margin:6px 0 12px}
+.top h1{margin:0;font-size:24px}
+.air{padding:14px 16px;margin-bottom:12px;border:1px solid var(--line);background:#fff;display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:center}
+.air b{font-size:18px}.air .big{font-size:30px;font-weight:600;grid-row:span 2}
+.air.bad{background:var(--no-soft);border-color:var(--no)}.air.bad b{color:var(--no)}
+.idea{display:none;margin:-6px 0 12px;padding:10px 14px;background:var(--no);color:#fff;font-size:15px}
+.air.bad+.idea{display:block}
+.today{display:grid;gap:8px;margin-bottom:16px}
+.cls{display:grid;grid-template-columns:auto 1fr auto;gap:2px 12px;align-items:center;padding:12px 14px;background:#fff;border:1px solid var(--line);cursor:pointer;font:inherit;text-align:left;width:100%}
+.cls .p{font-size:13px;color:var(--sub);grid-row:span 2}
+.cls b{font-size:17px}.cls small{color:var(--sub);font-size:13px}
+.cls .loc{grid-row:span 2;font-size:12px}
+h2.s{font-size:15px;color:var(--sub);font-weight:600;margin:16px 0 8px}
+.bar{height:6px;background:var(--head);margin-top:6px}.bar i{display:block;height:100%;background:var(--accent)}
+.sw{font:inherit;font-size:13px;border:1px solid var(--line-strong);background:#fff;padding:4px 10px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="bands"><i></i><i></i></div>
+<div class="demo-flag"><b>연수용 예시 화면</b> · 날씨·수업 기록은 모두 가상이에요</div>
+<main class="app">
+  <div class="top"><h1>수업관리</h1><span class="muted" id="dt"></span></div>
+  <div class="air" id="air"><b id="aT">미세먼지 보통</b><span class="big" id="aV">18°</span><span class="muted" id="aS">맑음 · 바람 약함 · 실외 수업 가능</span></div>
+  <div class="idea">실내 수업 아이디어: 피클볼 딩크 랠리 — 강당 배드민턴 네트로 2인 1조</div>
+  <div class="row" style="justify-content:flex-end;margin:-4px 0 8px"><button class="sw" id="sw">예시: '나쁨'일 때 보기</button></div>
+
+  <h2 class="s">오늘 수업</h2>
+  <div class="today" id="today"></div>
+  <h2 class="s">반별 진도 (2학년 피클볼)</h2>
+  <div class="card" id="prog" style="padding:12px 14px"></div>
+  <a class="back" href="../">← 업무분장표로</a>
+</main>
+<dialog id="dlg"><div class="in">
+  <h2 id="dn" style="margin:0 0 6px"></h2>
+  <label for="memo">오늘 수업 메모</label><textarea id="memo">딩크 랠리 10회 성공 조 6/6 · 키친 침범 줄어듦</textarea>
+  <div class="row" style="margin-top:12px"><button class="btn ghost" onclick="dlg.close()">닫기</button><button class="btn" style="flex:1" onclick="dlg.close();">저장 (예시)</button></div>
+</div></dialog>
+<script>
+const $=s=>document.querySelector(s);
+const d=new Date();$("#dt").textContent=`${d.getMonth()+1}월 ${d.getDate()}일 (${"일월화수목금토"[d.getDay()]})`;
+const TD=[["1교시","2-3","리턴 앤 발리 연습","실외-테니스장"],["2교시","2-4","리턴 앤 발리 연습","실외-테니스장"],["4교시","2-7","복식 경기","실외-테니스장"],["6교시","2-9","키친 규칙 이해","실내-교실"]];
+$("#today").innerHTML=TD.map(([p,c,u,l])=>`<button class="cls"><span class="p">${p}</span><b>${c}</b><span class="loc tag ${l.startsWith('실외')?'ok':'wait'}">${l}</span><small>${u}</small></button>`).join("");
+document.querySelectorAll(".cls").forEach((b,i)=>b.onclick=()=>{$("#dn").textContent=TD[i][1]+" · "+TD[i][2];dlg.showModal();});
+$("#prog").innerHTML=Array.from({length:11},(_,i)=>{const v=[9,10,10,9,8,8,10,7,7,6,6][i];return `<div style="margin:6px 0"><div class="row" style="justify-content:space-between"><span>2-${i+1}</span><span class="muted">${v}/12차시</span></div><div class="bar"><i style="width:${v/12*100}%"></i></div></div>`}).join("");
+let bad=false;$("#sw").onclick=()=>{bad=!bad;$("#air").classList.toggle("bad",bad);$("#aT").textContent=bad?"미세먼지 나쁨":"미세먼지 보통";$("#aS").textContent=bad?"실외 수업 자제 · 실내로 바꾸세요":"맑음 · 바람 약함 · 실외 수업 가능";$("#sw").textContent=bad?"예시: '보통'으로 돌아가기":"예시: '나쁨'일 때 보기";};
+</script>
+</body>
+</html>
