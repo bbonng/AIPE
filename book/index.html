@@ -51,7 +51,7 @@ a{color:inherit}
 #cover{min-height:100%;display:flex;flex-direction:column}
 #cover .wrap{width:100%}
 .photo{margin:0;max-width:34rem;margin-inline:auto}
-.photo img{display:block;width:100%;max-width:100%;aspect-ratio:4/3;object-fit:cover;object-position:50% 60%;max-height:52vh;background:#fff}
+.photo img{display:block;width:100%;max-width:100%;aspect-ratio:16/9;object-fit:cover;object-position:50% 55%;max-height:46vh;background:#fff}
 .photo figcaption{font-family:var(--sans);font-size:12px;color:var(--soft);padding:8px 20px 0;letter-spacing:.02em}
 /* 표지 그림이 아직 없을 때 자리만 잡아 두는 틀 — img에 src가 들어오면 자동으로 사라짐 */
 .photo .slot{aspect-ratio:4/3;max-height:46vh;border:1px dashed var(--rule);display:grid;place-items:center;font-family:var(--sans);font-size:12px;color:var(--soft);letter-spacing:.06em}
@@ -113,7 +113,7 @@ a{color:inherit}
 <section id="cover" class="view">
   <figure class="photo">
     <!-- 표지 그림이 정해지면 아래 img에 src를 넣고 slot div를 지우기 -->
-    <img id="coverImg" src="cover.png" alt="밤늦게 모니터 두 대 앞에 앉은 체육교사 — 두들 그림" width="1456" height="1092">
+    <img id="coverImg" src="cover.png" alt="밤에 모니터 두 대 앞에 앉은 체육교사. 왼쪽 화면은 AI와의 대화, 오른쪽은 학교폭력·생활지도 목록 — 두들 그림" width="1680" height="945">
     <div class="slot" id="coverSlot" hidden>표지 그림 자리</div>
     <figcaption>어느 새벽</figcaption>
   </figure>
