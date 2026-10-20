@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>학생 상담보다 쉬운 AI 대화</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: 1600×900 무대 하나를 화면에 맞춰 축소. 무대 위 물건들이 단계마다 자리·크기·기울기를 바꾸며 이어서 움직임(모핑) */
+:root{
+  /* 색 조합: 체육관 마루 — 마루 나무색 바탕, 남색 글자, 코트 라인 주황 주석 */
+  --hero:#eedcbf;      /* 글자 장면 배경: 짙은 마루 */
+  --ground:#f4ede1;    /* 화면 장면 배경: 옅은 마루 */
+  --ink:#1e2a3a;       /* 제목: 남색 */
+  --ink2:#3c4656; --mute:#7f7768;
+  --mark:#e0760f;      /* 화살표·동그라미: 코트 라인 주황 */
+  --noteBg:#ffffff; --noteInk:#c45f08;
+  --b1:#e2b77c; --b2:#f0cf73; --b3:#d9a066; --b4:#9bb8ec;
+  --bubble:#f7ead3; --keyFace:#ffffff; --keyEdge:#d8cdb9;
+  --paper:#ffffff; --line:#dcd9cf;
+  --font:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --ease:cubic-bezier(.65,0,.25,1);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--font);overflow:hidden;
+  padding-left:max(0px,env(safe-area-inset-left,0px));padding-right:max(0px,env(safe-area-inset-right,0px));-webkit-font-smoothing:antialiased}
+#viewport{position:fixed;inset:0;overflow:hidden;cursor:default;user-select:none;-webkit-user-select:none}
+#stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;overflow:hidden;background:var(--ground);transition:background-color .9s ease;transform-origin:center center;transform:translate(-50%,-50%)}
+
+/* 흐린 배경 */
+.blob{position:absolute;border-radius:50%;filter:blur(120px);pointer-events:none;transition:opacity .9s ease}
+#stage.hero{background:var(--hero)}#stage.hero .blob{opacity:.55!important}
+
+/* 단계마다 움직이는 물건 */
+.m{position:absolute;left:0;top:0;transform-origin:center center;will-change:transform,opacity;
+  transition:transform 1.1s var(--ease),opacity .6s ease,color .6s ease}
+.fast .m{transition-duration:.0s!important}
+
+.key{width:360px;height:200px;border-radius:30px;background:var(--keyFace);color:#14182a;border:1.5px solid var(--line);
+  display:grid;place-items:center;font-size:62px;font-weight:700;letter-spacing:-.5px;
+  box-shadow:0 10px 0 var(--keyEdge),0 22px 40px rgba(20,30,60,.18)}
+.key span{display:block;transition:transform .12s ease}
+.key.pressed{box-shadow:0 3px 0 var(--keyEdge),0 8px 18px rgba(28,35,51,.16)}
+.key.pressed span{transform:translateY(7px)}
+
+.txt{display:flex;align-items:center;font-weight:700;line-height:1.2;text-wrap:balance}
+.center{justify-content:center;text-align:center}
+
+/* 대화창 */
+.chat{width:1280px;height:800px;border-radius:30px;background:#fff;color:#1c2333;overflow:hidden;
+  box-shadow:0 40px 90px rgba(28,35,51,.22),0 2px 0 rgba(28,35,51,.04)}
+.chat .bar{position:absolute;left:0;right:0;top:0;height:56px;display:flex;align-items:center;gap:9px;padding:0 22px;
+  border-bottom:1px solid #eceff4;background:#fafbfc}
+.dot{width:13px;height:13px;border-radius:50%}
+.bar .t{margin-left:14px;font-size:19px;color:#6b7385;font-weight:500}
+.tag{margin-left:auto;font-size:15px;color:#8a92a6;border:1.5px dashed #c3c9d6;border-radius:8px;padding:3px 10px}
+.bubble{position:absolute;right:90px;top:96px;width:700px;background:var(--bubble);border-radius:24px 24px 6px 24px;
+  padding:24px 30px;font-size:26px;line-height:1.55;white-space:pre-line;opacity:0;transform:translateY(16px);transition:opacity .4s ease,transform .5s var(--ease)}
+.reply{position:absolute;left:90px;top:300px;width:900px;display:flex;gap:20px;opacity:0;transform:translateY(16px);
+  transition:opacity .4s ease,transform .5s var(--ease)}
+.av{flex:none;width:48px;height:48px;border-radius:13px;background:#1c2333;color:#fff;display:grid;place-items:center;font-weight:700;font-size:19px}
+.reply p{margin:0 0 8px;font-size:24px;line-height:1.65;color:#30384a}
+.reply ul{margin:0;padding-left:26px;font-size:22px;line-height:1.75;color:#4a5266}
+.reply .dots{display:none;gap:7px;align-items:center;height:48px}
+.reply .dots i{width:10px;height:10px;border-radius:50%;background:#9aa1b3;animation:blink 1s infinite}
+.reply .dots i:nth-child(2){animation-delay:.15s}.reply .dots i:nth-child(3){animation-delay:.3s}
+@keyframes blink{0%,100%{opacity:.25}50%{opacity:1}}
+.chat.thinking .reply{opacity:1;transform:none}.chat.thinking .reply .dots{display:flex}.chat.thinking .reply .body{display:none}
+.chat.sent .bubble,.chat.replied .bubble,.chat.thinking .bubble{opacity:1;transform:none}
+.chat.replied .reply{opacity:1;transform:none}
+.input{position:absolute;left:90px;right:90px;bottom:36px;min-height:84px;border:2px solid #dfe3ec;border-radius:24px;
+  display:flex;align-items:flex-end;gap:16px;padding:16px 16px 16px 28px;font-size:24px;line-height:1.55;color:#1c2333}
+.input .field{flex:1;min-height:37px;padding-bottom:6px;white-space:pre-wrap}
+.input .field:empty::before{content:"무엇이든 물어보세요";color:#9aa1b3}
+.input .field.caret::after{content:"";display:inline-block;width:2px;height:28px;background:#1c2333;vertical-align:-5px;margin-left:2px;animation:blink .9s steps(1) infinite}
+.send{flex:none;width:52px;height:52px;border-radius:16px;background:#1c2333;display:grid;place-items:center}
+
+/* 점수판 */
+.score{width:1280px;height:720px;border-radius:30px;background:#0f1522;color:#fff;overflow:hidden;
+  box-shadow:0 40px 90px rgba(28,35,51,.28)}
+.score .tag{position:absolute;top:20px;right:22px;border-color:#3a4357;color:#8b93a8}
+.score .time{position:absolute;left:0;right:0;top:34px;text-align:center;font-size:118px;font-weight:700;letter-spacing:3px;font-variant-numeric:tabular-nums}
+.score .lbl{position:absolute;left:0;right:0;top:186px;text-align:center;font-size:22px;color:#8b93a8;letter-spacing:6px}
+.team{position:absolute;top:270px;width:500px;height:380px;border-radius:28px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.team .n{font-size:38px;font-weight:700;letter-spacing:4px}
+.team .v{font-size:220px;font-weight:900;line-height:1;margin-top:4px;font-variant-numeric:tabular-nums;transition:transform .25s ease}
+.team .v.bump{transform:scale(.82)}
+.team .s{font-size:21px;opacity:.75;margin-top:4px}
+.blue{left:100px;background:#1d4ed8}.white{right:100px;background:#e9edf5;color:#0f1522}
+
+.cursor{width:40px;height:54px}
+.ripple{position:absolute;width:90px;height:90px;margin:-45px 0 0 -45px;border-radius:50%;border:4px solid var(--mark);opacity:0;pointer-events:none}
+.ripple.go{animation:rip .6s ease-out}
+@keyframes rip{from{transform:scale(.2);opacity:.9}to{transform:scale(1.3);opacity:0}}
+
+.note{padding:14px 26px;border-radius:14px;background:var(--noteBg);border:2px solid var(--mark);color:var(--noteInk);
+  font-size:30px;font-weight:700;white-space:nowrap;box-shadow:0 12px 30px rgba(28,35,51,.18)}
+
+svg.ink{position:absolute;inset:0;width:1600px;height:900px;pointer-events:none;overflow:visible}
+svg.ink path{fill:none;stroke:var(--mark);stroke-width:9;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:var(--len);stroke-dashoffset:var(--len);transition:stroke-dashoffset .7s var(--ease)}
+svg.ink path.on{stroke-dashoffset:0}
+svg.ink path.halo{stroke:#fff;stroke-width:19}
+.fast svg.ink path{transition:none}
+
+/* 견본 안내 */
+.guide{width:1440px;height:760px}
+.guide h2{margin:0;font-size:58px;font-weight:900;letter-spacing:-1px}
+.guide .lead{margin:16px 0 0;font-size:26px;color:var(--ink2)}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;margin-top:56px}
+.card{background:var(--paper);border:1.5px solid var(--line);border-radius:26px;padding:38px 36px;box-shadow:0 16px 40px rgba(28,35,51,.1)}
+.card b{display:block;font-size:56px;color:var(--mark);font-weight:900;line-height:1}
+.card h3{margin:22px 0 12px;font-size:32px}
+.card p{margin:0;font-size:23px;line-height:1.6;color:var(--ink2)}
+.guide .foot{margin-top:40px;font-size:22px;color:var(--mute)}
+kbd{font-family:var(--font);font-size:.9em;border:1.5px solid var(--line);border-bottom-width:3px;border-radius:7px;padding:1px 9px;background:#fff;color:var(--ink)}
+
+/* 조작 안내 */
+#hud{position:fixed;left:50%;bottom:max(14px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;align-items:center;gap:14px;
+  font-size:13px;color:var(--mute);background:rgba(255,255,255,.75);backdrop-filter:blur(8px);border:1px solid var(--line);
+  padding:7px 8px 7px 14px;border-radius:999px;transition:opacity .4s ease}
+#hud.hide{opacity:0;pointer-events:none}
+#hud .pips{display:flex;gap:5px}
+#hud .pips i{width:7px;height:7px;border-radius:50%;background:#c7cdd9}
+#hud .pips i.on{background:var(--ink)}
+#hud button{font:inherit;font-size:13px;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:5px 12px;cursor:pointer}
+#hud button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+#hud{white-space:nowrap}@media (max-width:520px){#hint{display:none}}
+@media (prefers-reduced-motion:reduce){.m,.bubble,.reply,svg.ink path{transition-duration:0s!important}.ripple.go{animation:none}}
+</style>
+</head>
+<body>
+
+<div id="viewport">
+  <div id="stage" aria-live="polite">
+    <div class="blob" style="width:820px;height:640px;left:-180px;top:-170px;background:var(--b1)"></div>
+    <div class="blob" style="width:720px;height:580px;right:-150px;top:110px;background:var(--b2)"></div>
+    <div class="blob" style="width:700px;height:520px;left:470px;bottom:-300px;background:var(--b3)"></div>
+    <div class="blob" style="width:380px;height:320px;right:330px;bottom:-50px;background:var(--b4);opacity:.8"></div>
+
+    <div class="m txt center" id="caption" style="width:800px;height:60px;font-size:30px;font-weight:500;color:var(--mute)">오늘 제일 많이 누를 키</div>
+    <div class="m txt" id="title" style="width:1150px;height:260px;font-size:92px;font-weight:900;letter-spacing:-2px">학생 상담보다 쉬운<br>AI 대화</div>
+    <div class="m txt" id="sub" style="width:1150px;height:50px;font-size:32px;font-weight:500;color:var(--ink2)">바이브코딩이 뭔지 아직도 모르는 체육교사의 코딩 이야기</div>
+    <div class="m txt" id="org" style="width:800px;height:40px;font-size:22px;font-weight:500;color:var(--mute)">2026. AI 체육수업 실천 연구회</div>
+    <div class="m txt center" id="line1" style="width:1300px;height:120px;font-size:84px;font-weight:900;letter-spacing:-1.5px">전 코딩을 모릅니다.</div>
+    <div class="m txt center" id="line2" style="width:1300px;height:130px;font-size:96px;font-weight:900;letter-spacing:-2px">하지만, 만들었습니다.</div>
+    <div class="m txt" id="label" style="width:520px;height:220px;font-size:66px;font-weight:900;letter-spacing:-1px">시작은<br>대화 한 줄</div>
+    <div class="m txt center" id="label2" style="width:520px;height:60px;font-size:30px;font-weight:500;color:var(--mute)">엔터 한 번 뒤</div>
+    <div class="m txt center" id="closing" style="width:1300px;height:260px;font-size:84px;font-weight:900;letter-spacing:-1.5px">대화만 잘하면<br>여러분도 가능합니다</div>
+
+    <div class="m chat" id="chat">
+      <div class="bar"><span class="dot" style="background:#ff5f57"></span><span class="dot" style="background:#febc2e"></span><span class="dot" style="background:#28c840"></span><span class="t">새 대화</span><span class="tag">예시 화면</span></div>
+      <div class="bubble" id="bubble"></div>
+      <div class="reply"><div class="av">AI</div><div><div class="dots"><i></i><i></i><i></i></div><div class="body">
+        <p>좋아요. 파일 하나짜리 웹페이지로 만들어 볼게요.</p>
+        <ul><li>TV 화면: 경기 시간 + 두 팀 내야 인원</li><li>휴대폰 화면: 팀별 [−1] 버튼</li><li>시작 인원 11명, 0명이 되면 경기 종료 표시</li></ul></div></div></div>
+      <div class="input"><div class="field" id="field"></div><div class="send"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div></div>
+    </div>
+
+    <div class="m score" id="score">
+      <span class="tag">예시 화면</span>
+      <div class="time" id="clock">04:37</div><div class="lbl">경기 시간</div>
+      <div class="team blue"><div class="n">청팀</div><div class="v" id="blueN">8</div><div class="s">내야 인원 / 11</div></div>
+      <div class="team white"><div class="n">백팀</div><div class="v">6</div><div class="s">내야 인원 / 11</div></div>
+    </div>
+
+    <div class="m key" id="key"><span>Enter</span></div>
+
+    <svg class="ink" viewBox="0 0 1600 900" aria-hidden="true">
+      <path id="arrowA" d="M590 690 Q 300 720 262 548 M236 584 L262 546 L294 578"/>
+      <path id="circleB" d="M548 400 C 680 404 690 640 540 660 C 400 676 384 430 520 404"/>
+      <path id="arrowB" d="M610 828 Q 470 830 494 700 M466 728 L494 698 L520 730"/>
+    </svg>
+    <div class="m note" id="noteA">이게 제가 한 전부입니다</div>
+    <div class="m note" id="noteB">누르면 한 명씩 줄어듭니다</div>
+    <div class="ripple" id="ripple"></div>
+    <div class="m cursor" id="cursor"><svg width="40" height="54" viewBox="0 0 24 32"><path d="M2 1.5 L2 25 L8 19.5 L12 29 L16 27.3 L12 18 L20 18 Z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+
+    <div class="m guide" id="guide">
+      <h2>이 견본 쓰는 법</h2>
+      <p class="lead">파일 하나짜리 HTML입니다. 고칠 때도 코딩 대신 AI와 대화하면 됩니다.</p>
+      <div class="cards">
+        <div class="card"><b>1</b><h3>파일을 올린다</h3><p>이 HTML 파일을 Claude, ChatGPT, Gemini 대화창에 그대로 올립니다.</p></div>
+        <div class="card"><b>2</b><h3>바꿀 것을 말한다</h3><p>"점수판 대신 내 수업 도구 화면으로, 문구는 이렇게 바꿔 줘"처럼 말로 부탁합니다.</p></div>
+        <div class="card"><b>3</b><h3>브라우저로 띄운다</h3><p>받은 파일을 더블클릭하고 <kbd>F</kbd>로 전체화면, <kbd>→</kbd>로 넘깁니다.</p></div>
+      </div>
+      <p class="foot">조작: <kbd>→</kbd> <kbd>Space</kbd> 다음 · <kbd>←</kbd> 이전 · <kbd>F</kbd> 전체화면 · 화면 클릭도 다음</p>
+    </div>
+  </div>
+</div>
+<div id="hud"><span class="pips" id="pips"></span><span id="hint">→ 다음 · ← 이전</span><button type="button" id="fsBtn">전체화면</button></div>
+
+<script>
+(function(){
+  var stage=document.getElementById('stage'), viewport=document.getElementById('viewport');
+  var $=function(id){return document.getElementById(id)};
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // 크기 맞추기
+  function fit(){var s=Math.min(innerWidth/1600,innerHeight/900);stage.style.transform='translate(-50%,-50%) scale('+s+')';}
+  addEventListener('resize',fit);fit();
+
+  // 물건 크기
+  var SIZE={caption:[800,60],title:[1150,260],sub:[1150,50],org:[800,40],line1:[1300,120],line2:[1300,130],
+    label:[520,220],label2:[520,60],closing:[1300,260],chat:[1280,800],score:[1280,720],key:[360,200],
+    noteA:[470,70],noteB:[470,70],cursor:[40,54],guide:[1440,760]};
+  function P(cx,cy,s,o,ry,rx,extra){return {cx:cx,cy:cy,s:s==null?1:s,o:o==null?1:o,ry:ry||0,rx:rx||0,x:extra||{}};}
+  function apply(id,p){
+    var el=$(id),w=SIZE[id][0],h=SIZE[id][1];
+    el.style.transform='translate('+(p.cx-w/2)+'px,'+(p.cy-h/2)+'px) perspective(2200px) rotateY('+p.ry+'deg) rotateX('+p.rx+'deg) scale('+p.s+')';
+    el.style.opacity=p.o;
+    el.style.pointerEvents='none';
+    for(var k in p.x) el.style[k]=p.x[k];
+  }
+  // 대화창 위의 점을 화면 좌표로 (회전 없는 상태에서)
+  function onChat(p,lx,ly){return [p.cx+(lx-640)*p.s, p.cy+(ly-400)*p.s];}
+  function onScore(p,lx,ly){return [p.cx+(lx-640)*p.s, p.cy+(ly-360)*p.s];}
+
+  var CHAT_ZOOM=P(460,732,1.7);       // 말풍선(가운데 840,181)을 (800,360)으로
+  var SCORE_FLAT=P(800,430,0.92);
+  var blueCenter=onScore(SCORE_FLAT,350,460); // 청팀 숫자 가운데
+
+  var HIDE=function(cx,cy,s){return P(cx,cy,s==null?0.9:s,0);};
+  // 단계별 자리. 없는 단계는 마지막으로 정의된 숨김 자리를 씀
+  var POSE={
+    caption:[P(800,300),HIDE(800,260),HIDE(800,260)],
+    key:[P(800,480),P(1460,120,0.42),HIDE(800,480,0.6),HIDE(800,480,0.6),HIDE(1490,815,0.45),HIDE(1490,815,0.45),HIDE(1490,815,0.45),HIDE(1490,815,0.45),HIDE(800,640,0.6),HIDE(800,640,0.6),P(800,660,0.62),HIDE(800,660,0.5)],
+    title:[HIDE(665,400),P(665,400),HIDE(665,380)],
+    sub:[HIDE(665,580),P(665,585),HIDE(665,600)],
+    org:[HIDE(490,790),P(490,790),HIDE(490,800)],
+    line1:[HIDE(800,450),HIDE(800,450),P(800,450,1,1,0,0,{color:'var(--ink)'}),P(800,340,0.62,1,0,0,{color:'var(--mute)'}),HIDE(800,300,0.6)],
+    line2:[HIDE(800,520),HIDE(800,520),HIDE(800,520),P(800,480),HIDE(800,480)],
+    label:[HIDE(300,450),HIDE(300,450),HIDE(300,450),HIDE(300,450),P(330,450),HIDE(260,450)],
+    chat:[HIDE(1260,450,0.6),HIDE(1260,450,0.6),HIDE(1260,450,0.6),P(1260,450,0.6,0,-34,10),P(1060,450,0.74,1,-24,9),P(800,450,0.95),CHAT_ZOOM,P(340,430,0.36),HIDE(220,430,0.3)],
+    score:[HIDE(1300,440,0.5),HIDE(1300,440,0.5),HIDE(1300,440,0.5),HIDE(1300,440,0.5),HIDE(1300,440,0.5),HIDE(1300,440,0.5),P(1320,440,0.5,0,-34,10),P(1080,440,0.6,1,-24,9),SCORE_FLAT,SCORE_FLAT,HIDE(800,430,0.8)],
+    label2:[HIDE(340,640),HIDE(340,640),HIDE(340,640),HIDE(340,640),HIDE(340,640),HIDE(340,640),HIDE(340,640),P(340,640),HIDE(340,660)],
+    noteA:[HIDE(825,690),HIDE(825,690),HIDE(825,690),HIDE(825,690),HIDE(825,690),HIDE(825,690),P(825,690),HIDE(825,700)],
+    noteB:[HIDE(845,828),HIDE(845,828),HIDE(845,828),HIDE(845,828),HIDE(845,828),HIDE(845,828),HIDE(845,828),HIDE(845,828),HIDE(845,828),P(845,828),HIDE(845,840)],
+    cursor:[HIDE(1480,820,1),HIDE(1480,820,1),HIDE(1480,820,1),HIDE(1480,820,1),HIDE(1480,820,1),HIDE(1480,820,1),HIDE(1480,820,1),HIDE(1480,820,1),P(1480,820),P(blueCenter[0]+38,blueCenter[1]+50),HIDE(blueCenter[0]+38,blueCenter[1]+50,1)],
+    closing:[HIDE(800,380)].concat(Array(9).fill(HIDE(800,380))).concat([P(800,380),HIDE(800,360)]),
+    guide:Array(11).fill(HIDE(800,470,0.96)).concat([P(800,470)])
+  };
+  var N=12;
+  function poseAt(id,i){var a=POSE[id];return a[Math.min(i,a.length-1)];}
+
+  // 대화창 안 상태
+  var PROMPT='체육관 TV에 띄울 피구 점수판 만들어 줘.\n위에는 경기 시간, 아래엔 두 팀 내야 인원.\n휴대폰으로 누르면 한 명씩 줄어들게.';
+  $('bubble').textContent=PROMPT;
+  function chatState(c){var el=$('chat');el.classList.remove('sent','thinking','replied');if(c)el.classList.add(c);}
+  function ink(ids){['arrowA','circleB','arrowB'].forEach(function(id){var on=ids.indexOf(id)>-1;$(id).classList.toggle('on',on);
+    var h=document.querySelector('path.halo[data-for="'+id+'"]');if(h)h.classList.toggle('on',on);});}
+  ['arrowA','circleB','arrowB'].forEach(function(id){var p=$(id);var L=Math.ceil(p.getTotalLength()+2);p.style.setProperty('--len',L);
+    var h=p.cloneNode();h.removeAttribute('id');h.setAttribute('class','halo');h.dataset.for=id;h.style.setProperty('--len',L);p.parentNode.insertBefore(h,p);});
+
+  var timers=[];
+  function later(ms,fn){timers.push(setTimeout(fn,reduce?0:ms));}
+  function clearTimers(){timers.forEach(clearTimeout);timers=[];}
+
+  // 단계별 최종 모습 (뒤로 가거나 건너뛸 때)
+  function finalInner(i){
+    $('field').textContent='';$('field').classList.remove('caret');
+    $('key').classList.remove('pressed');
+    chatState(i>=5?'replied':null);
+    $('blueN').textContent=i>=9?'7':'8';
+    var on=[];if(i===6)on.push('arrowA');if(i===9)on.push('circleB','arrowB');ink(on);
+  }
+
+  var cur=-1;
+  function go(i,animate){
+    i=Math.max(0,Math.min(N-1,i));
+    if(i===cur)return;
+    var forward=animate&&i===cur+1;
+    clearTimers();
+    if(!animate){stage.classList.add('fast');}
+    Object.keys(POSE).forEach(function(id){apply(id,poseAt(id,i));});
+    stage.classList.toggle('hero',[0,1,2,3,10].indexOf(i)>-1);
+    if(forward&&i===5){runTyping();}
+    else if(forward&&i===9){finalInner(8);runClick();}
+    else if(forward&&(i===6)){finalInner(5);later(900,function(){ink(['arrowA']);});}
+    else{finalInner(i);}
+    if(!animate){void stage.offsetWidth;stage.classList.remove('fast');}
+    cur=i;
+    var pips=$('pips').children;for(var k=0;k<pips.length;k++)pips[k].classList.toggle('on',k===i);
+    try{history.replaceState(null,'','#s'+(i+1));}catch(e){}
+  }
+
+  // 5단계: 타이핑 → Enter 키 → 전송 → 답
+  function runTyping(){
+    var f=$('field');f.textContent='';f.classList.add('caret');chatState(null);ink([]);
+    var n=0,start=1000,speed=reduce?0:38;
+    if(reduce){f.textContent=PROMPT;}
+    else{(function tick(){later(n===0?start:speed,function(){n++;f.textContent=PROMPT.slice(0,n);if(n<PROMPT.length)tick();else afterType();});})();return;}
+    afterType();
+  }
+  function afterType(){
+    var k=$('key');
+    later(250,function(){apply('key',P(1490,815,0.45));});
+    later(1150,function(){k.classList.add('pressed');});
+    later(1330,function(){k.classList.remove('pressed');var f=$('field');f.textContent='';f.classList.remove('caret');chatState('sent');});
+    later(1700,function(){apply('key',HIDE(1490,840,0.4));});
+    later(1900,function(){chatState('thinking');});
+    later(3000,function(){chatState('replied');});
+  }
+  // 9단계: 커서 이동 → 클릭 → 숫자 줄어듦 → 동그라미·화살표
+  function runClick(){
+    var r=$('ripple'),v=$('blueN');
+    later(1150,function(){r.style.left=(blueCenter[0]+20)+'px';r.style.top=(blueCenter[1]+26)+'px';r.classList.remove('go');void r.offsetWidth;r.classList.add('go');v.classList.add('bump');});
+    later(1380,function(){v.textContent='7';v.classList.remove('bump');});
+    later(1650,function(){ink(['circleB']);});
+    later(2100,function(){ink(['circleB','arrowB']);});
+  }
+
+  // 시계
+  var secs=4*60+37;setInterval(function(){if(cur>=7&&cur<=9&&secs>0){secs--;$('clock').textContent=('0'+Math.floor(secs/60)).slice(-2)+':'+('0'+secs%60).slice(-2);}},1000);
+
+  // 조작
+  var pipBox=$('pips');for(var k=0;k<N;k++)pipBox.appendChild(document.createElement('i'));
+  function next(){go(cur+1,true);} function prev(){go(cur-1,false);}
+  addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'||e.key==='Enter'){e.preventDefault();next();}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'||e.key==='Backspace'){e.preventDefault();prev();}
+    else if(e.key==='Home'){go(0,false);} else if(e.key==='End'){go(N-1,false);}
+    else if(e.key==='f'||e.key==='F'){toggleFs();}
+    wake();
+  });
+  viewport.addEventListener('click',function(e){ if(e.clientX<innerWidth*0.2)prev();else next(); wake(); });
+  function toggleFs(){
+    try{
+      if(document.fullscreenElement){document.exitFullscreen().catch(function(){});}
+      else{var p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(function(){});}
+    }catch(err){}
+  }
+  $('fsBtn').addEventListener('click',function(e){e.stopPropagation();toggleFs();});
+  var hud=$('hud'),hudT;
+  function wake(){hud.classList.remove('hide');clearTimeout(hudT);hudT=setTimeout(function(){hud.classList.add('hide');},2500);}
+  addEventListener('mousemove',wake);
+
+  var start=0,m=/^#s(\d+)$/.exec(location.hash||'');if(m)start=Math.min(N,Math.max(1,+m[1]))-1;
+  go(start,false);wake();
+})();
+</script>
+</body>
+</html>
